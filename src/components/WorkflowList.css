@@ -1,0 +1,69 @@
+.workflow-list {
+  list-style-type: none;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+.workflow-item {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+.workflow-item:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.workflow-name {
+  font-weight: bold;
+}
+
+.workflow-status {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8em;
+  font-weight: bold;
+}
+
+.status-enabled {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status-disabled {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.workflow-controls {
+  display: flex;
+  align-items: center;
+}
+
+.delete-button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 4px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: 16px; /* Отступ от статуса */
+  font-size: 0.8em;
+  transition: background-color 0.2s;
+}
+
+.delete-button:hover {
+  background-color: #c82333;
+}
+.workflow-item {
+    /* ... существующие стили ... */
+    cursor: pointer; /* Показываем, что на элемент можно нажать */
+}
+

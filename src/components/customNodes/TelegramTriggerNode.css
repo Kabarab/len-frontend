@@ -1,0 +1,28 @@
+.telegram-trigger-node {
+  border: 2px dashed #29b6f6; /* Пунктирная рамка для триггеров */
+  border-radius: 8px;
+  background: white;
+  width: 200px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+/* Используем те же стили для заголовка, что и у обычного узла */
+.telegram-trigger-node .node-header {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  background-color: #f0f4f8;
+  border-top-left-radius: 6px; /* Учитываем толщину рамки */
+  border-top-right-radius: 6px;
+}
+.telegram-trigger-node .node-icon {
+  margin-right: 8px;
+}
+.telegram-trigger-node .node-title {
+  font-weight: bold;
+}
+.telegram-trigger-node .node-body {
+  padding: 12px 8px;
+  font-style: italic;
+  color: #555;
+  text-align: center;
+}

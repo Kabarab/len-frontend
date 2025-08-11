@@ -1,0 +1,69 @@
+.settings-panel {
+  width: 300px;
+  border-left: 1px solid #ddd;
+  background-color: #f7f7f7;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+.settings-header {
+  padding: 15px;
+  font-size: 18px;
+  font-weight: bold;
+  border-bottom: 1px solid #ddd;
+  background-color: #fff;
+}
+.settings-body {
+  padding: 15px;
+  flex-grow: 1;
+  overflow-y: auto;
+}
+.settings-body label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  font-size: 14px;
+}
+.settings-body input, .settings-body textarea {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 15px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+.chat-id-wrapper {
+    display: flex;
+    gap: 5px;
+}
+.chat-id-wrapper input {
+    flex-grow: 1;
+    margin-bottom: 0;
+}
+.settings-body small {
+    display: block;
+    margin-top: -10px;
+    margin-bottom: 15px;
+    font-size: 12px;
+    color: #666;
+}
+.save-settings-button {
+  margin: 15px;
+  padding: 12px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.webhook-url-wrapper {
+    display: flex;
+    gap: 5px;
+    margin-top: 5px;
+}
+.webhook-url-wrapper input {
+    flex-grow: 1;
+    background-color: #eee;
+}
