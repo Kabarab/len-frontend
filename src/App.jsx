@@ -31,7 +31,7 @@ function App() {
   useEffect(() => {
     if (user) {
       getAuthHeaders().then(headers => {
-        fetch('http://localhost:3000/api/workflows', { headers })
+        fetch(`${import.meta.env.VITE_API_URL}/api/workflows`, { headers })
           .then(response => {
             if (!response.ok) { throw new Error('Ошибка сети или сервера'); }
             return response.json();
@@ -46,7 +46,7 @@ function App() {
 
   const handleAddWorkflow = async (newWorkflowData) => {
     const headers = await getAuthHeaders();
-    fetch('http://localhost:3000/api/workflows', {
+    fetch(`${import.meta.env.VITE_API_URL}/api/workflows`, {
       method: 'POST',
       headers,
       body: JSON.stringify(newWorkflowData),
@@ -59,7 +59,7 @@ function App() {
 
   const handleDeleteWorkflow = async (idToDelete) => {
     const headers = await getAuthHeaders();
-    fetch(`http://localhost:3000/api/workflows/${idToDelete}`, {
+    fetch(`${import.meta.env.VITE_API_URL}/api/workflows/${idToDelete}`, {
       method: 'DELETE',
       headers,
     })
@@ -81,7 +81,6 @@ function App() {
   }
 
   if (selectedWorkflowId) {
-    // --- ИЗМЕНЕНИЕ: Передаем getAuthHeaders в редактор ---
     return (
       <WorkflowEditor 
         workflowId={selectedWorkflowId} 

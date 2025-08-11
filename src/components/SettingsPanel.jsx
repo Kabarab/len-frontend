@@ -2,13 +2,11 @@ import { useState, useEffect } from 'react';
 import './SettingsPanel.css';
 
 function SettingsPanel({ node, onSave, onGetChatId, isFetchingChatId, workflowId }) {
-  // Состояния для узла-действия Telegram
   const [botToken, setBotToken] = useState(node.data.botToken || '');
   const [chatId, setChatId] = useState(node.data.chatId || '');
   const [message, setMessage] = useState(node.data.message || '');
 
-  // Уникальный URL вебхука для триггера
-  const webhookUrl = `http://localhost:3000/api/webhooks/telegram/${workflowId}`;
+  const webhookUrl = `${import.meta.env.VITE_API_URL}/api/webhooks/telegram/${workflowId}`;
 
   useEffect(() => {
     setBotToken(node.data.botToken || '');
@@ -32,7 +30,6 @@ function SettingsPanel({ node, onSave, onGetChatId, isFetchingChatId, workflowId
     alert('URL скопирован в буфер обмена!');
   };
 
-  // В зависимости от типа узла, показываем разные настройки
   if (node.type === 'telegramTrigger') {
     return (
       <aside className="settings-panel">
@@ -59,7 +56,6 @@ function SettingsPanel({ node, onSave, onGetChatId, isFetchingChatId, workflowId
     );
   }
 
-  // Настройки по умолчанию для узла-действия Telegram
   return (
     <aside className="settings-panel">
       <div className="settings-header">Настройки узла: {node.data.label || 'Telegram'}</div>

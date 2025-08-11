@@ -28,7 +28,7 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
 
   useEffect(() => {
     getAuthHeaders().then(headers => {
-        fetch(`http://localhost:3000/api/workflows/${workflowId}`, { headers })
+        fetch(`${import.meta.env.VITE_API_URL}/api/workflows/${workflowId}`, { headers })
         .then(res => res.json())
         .then(data => {
             if (data.nodes) setNodes(data.nodes);
@@ -41,7 +41,7 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
   const onEdgesChange = useCallback((changes) => setEdges((eds) => applyEdgeChanges(changes, eds)), []);
   const onConnect = useCallback((connection) => setEdges((eds) => addEdge(connection, eds)), []);
   const onDragOver = useCallback((event) => { event.preventDefault(); event.dataTransfer.dropEffect = 'move'; }, []);
-
+  
   const onDrop = useCallback((event) => {
     event.preventDefault();
     const type = event.dataTransfer.getData('application/reactflow');
@@ -55,7 +55,7 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
 
   const handleSave = async () => {
     const headers = await getAuthHeaders();
-    fetch(`http://localhost:3000/api/workflows/${workflowId}`, {
+    fetch(`${import.meta.env.VITE_API_URL}/api/workflows/${workflowId}`, {
       method: 'PUT',
       headers,
       body: JSON.stringify({ nodes, edges }),
@@ -67,7 +67,7 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
 
   const handleRun = async () => {
     const headers = await getAuthHeaders();
-    fetch(`http://localhost:3000/api/workflows/${workflowId}/run`, {
+    fetch(`${import.meta.env.VITE_API_URL}/api/workflows/${workflowId}/run`, {
       method: 'POST',
       headers,
     })
@@ -98,7 +98,7 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
     }
     setIsFetchingChatId(true);
     try {
-        const response = await fetch('http://localhost:3000/api/telegram/get-chat-id', {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/telegram/get-chat-id`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ token: botToken }),
@@ -139,7 +139,7 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
   }, []);
 
   const onPaneClick = useCallback(() => { setMenu(null); setSettingsNode(null); }, []);
-
+  
   const createNewNode = (type, position, data) => {
     const newNode = { id: getId(), type, position, data };
     setNodes((nds) => nds.concat(newNode));
