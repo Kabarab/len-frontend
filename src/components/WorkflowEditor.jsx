@@ -25,6 +25,7 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
   const [menu, setMenu] = useState(null);
   const [settingsNode, setSettingsNode] = useState(null);
   const [isFetchingChatId, setIsFetchingChatId] = useState(false);
+  const [isSettingWebhook, setIsSettingWebhook] = useState(false);
 
   useEffect(() => {
     getAuthHeaders().then(headers => {
@@ -113,6 +114,26 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
         alert(`Ошибка при получении ID чата: ${error.message}`);
     } finally {
         setIsFetchingChatId(false);
+    }
+  };
+  
+  const handleSetWebhook = async (botToken) => {
+    setIsSettingWebhook(true);
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/telegram/set-webhook`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: botToken, workflowId: workflowId }),
+        });
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.message || 'Неизвестная ошибка');
+        }
+        alert(data.message);
+    } catch (error) {
+        alert(`Ошибка активации триггера: ${error.message}`);
+    } finally {
+        setIsSettingWebhook(false);
     }
   };
 
@@ -210,6 +231,8 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
             onGetChatId={handleGetChatId}
             isFetchingChatId={isFetchingChatId}
             workflowId={workflowId}
+            onSetWebhook={handleSetWebhook}
+            isSettingWebhook={isSettingWebhook}
         />
       )}
     </div>

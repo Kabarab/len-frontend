@@ -1,4 +1,5 @@
-import './NodeContextMenu.css'; // Используем те же стили
+// ИСПРАВЛЕНИЕ: Используем переименованный файл стилей
+import './NodeContextMenu.css'; 
 
 function PaneContextMenu({ top, left, onAction }) {
   return (
