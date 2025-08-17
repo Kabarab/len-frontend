@@ -42,7 +42,7 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
   const onEdgesChange = useCallback((changes) => setEdges((eds) => applyEdgeChanges(changes, eds)), []);
   const onConnect = useCallback((connection) => setEdges((eds) => addEdge(connection, eds)), []);
   const onDragOver = useCallback((event) => { event.preventDefault(); event.dataTransfer.dropEffect = 'move'; }, []);
-  
+
   const onDrop = useCallback((event) => {
     event.preventDefault();
     const type = event.dataTransfer.getData('application/reactflow');
@@ -116,7 +116,7 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
         setIsFetchingChatId(false);
     }
   };
-  
+
   const handleSetWebhook = async (botToken) => {
     setIsSettingWebhook(true);
     try {
@@ -160,7 +160,7 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
   }, []);
 
   const onPaneClick = useCallback(() => { setMenu(null); setSettingsNode(null); }, []);
-  
+
   const createNewNode = (type, position, data) => {
     const newNode = { id: getId(), type, position, data };
     setNodes((nds) => nds.concat(newNode));
