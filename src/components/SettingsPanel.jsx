@@ -8,7 +8,9 @@ function SettingsPanel({
     isFetchingChatId, 
     workflowId,
     onSetWebhook,
-    isSettingWebhook 
+    isSettingWebhook,
+    onDeleteWebhook, // Новая функция
+    isDeletingWebhook // Новое состояние
 }) {
   const [botToken, setBotToken] = useState(node.data.botToken || '');
   const [chatId, setChatId] = useState(node.data.chatId || '');
@@ -47,15 +49,24 @@ function SettingsPanel({
             Применить токен
           </button>
           <hr />
-          <label>2. Активация:</label>
-          <p>После применения токена, активируйте триггер.</p>
-          <button 
-            className="activate-button" 
-            onClick={() => onSetWebhook(node.data.botToken)}
-            disabled={isSettingWebhook || !node.data.botToken}
-          >
-            {isSettingWebhook ? 'Активация...' : 'Активировать триггер'}
-          </button>
+          <label>2. Управление Вебхуком:</label>
+          <p>Активируйте триггер, чтобы начать получать сообщения, или деактивируйте, чтобы использовать другие методы.</p>
+          <div className="button-group">
+            <button 
+              className="activate-button" 
+              onClick={() => onSetWebhook(node.data.botToken)}
+              disabled={isSettingWebhook || !node.data.botToken}
+            >
+              {isSettingWebhook ? '...' : 'Активировать'}
+            </button>
+            <button 
+              className="deactivate-button"
+              onClick={() => onDeleteWebhook(node.data.botToken)}
+              disabled={isDeletingWebhook || !node.data.botToken}
+            >
+              {isDeletingWebhook ? '...' : 'Деактивировать'}
+            </button>
+          </div>
           <small>Примечание: Активация будет работать только после развертывания бэкенда в интернете.</small>
         </div>
       </aside>
