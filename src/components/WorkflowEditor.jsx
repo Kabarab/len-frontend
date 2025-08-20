@@ -266,4 +266,3 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
 }
 
 export default WorkflowEditor;
-е
