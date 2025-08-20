@@ -1,0 +1,30 @@
+.add-node-menu {
+  position: absolute;
+  z-index: 1001; /* Выше чем у кнопки "+" */
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 2px 2px 8px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+}
+
+.add-node-menu-header {
+  padding: 8px 12px;
+  font-weight: bold;
+  color: #555;
+  border-bottom: 1px solid #eee;
+}
+
+.add-node-menu button {
+  background: none;
+  border: none;
+  padding: 10px 15px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.add-node-menu button:hover {
+  background-color: #f0f0f0;
+}

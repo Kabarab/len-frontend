@@ -4,7 +4,7 @@ import './TelegramTriggerNode.css';
 function TelegramTriggerNode({ id, data }) {
   const onPlusClick = (event) => {
     event.stopPropagation();
-    data.onAddNode(id);
+    data.onAddNode(id, event); // Передаем событие клика
   };
 
   return (

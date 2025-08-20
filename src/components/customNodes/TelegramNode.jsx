@@ -1,11 +1,10 @@
 import { Handle, Position } from 'reactflow';
 import './TelegramNode.css';
 
-// Принимаем новую функцию onAddNode через data
 function TelegramNode({ id, data }) {
   const onPlusClick = (event) => {
-    event.stopPropagation(); // Останавливаем всплытие события
-    data.onAddNode(id);
+    event.stopPropagation();
+    data.onAddNode(id, event); // Передаем событие клика
   };
 
   return (
@@ -24,7 +23,6 @@ function TelegramNode({ id, data }) {
 
       <Handle type="source" position={Position.Bottom} className="custom-handle" />
 
-      {/* Наша новая кнопка "+" */}
       <div className="add-node-button" onClick={onPlusClick}>+</div>
     </div>
   );

@@ -11,12 +11,12 @@ import OutputNode from './customNodes/OutputNode';
 import NodeContextMenu from './NodeContextMenu';
 import PaneContextMenu from './PaneContextMenu';
 import SettingsPanel from './SettingsPanel';
+import AddNodeMenu from './AddNodeMenu'; // Импортируем новое меню
 import './WorkflowEditor.css';
 
 const nodeTypes = {
   telegram: TelegramNode,
   telegramTrigger: TelegramTriggerNode,
-  // Регистрируем наши новые кастомные версии для стандартных типов
   input: InputNode,
   default: DefaultNode,
   output: OutputNode,
@@ -30,12 +30,25 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
   const [edges, setEdges] = useState([]);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
   const [menu, setMenu] = useState(null);
+  const [addNodeMenu, setAddNodeMenu] = useState(null); // Состояние для нового меню
   const [settingsNode, setSettingsNode] = useState(null);
   const [isFetchingChatId, setIsFetchingChatId] = useState(false);
   const [isSettingWebhook, setIsSettingWebhook] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const handleAddNode = useCallback((sourceNodeId) => {
+  const handleAddNode = useCallback((sourceNodeId, event) => {
+    const pane = reactFlowWrapper.current.getBoundingClientRect();
+    setAddNodeMenu({
+      sourceNodeId,
+      top: event.clientY - pane.top + 10,
+      left: event.clientX - pane.left,
+    });
+  }, []);
+
+  const handleAddNodeFromMenu = useCallback((nodeType) => {
+    if (!addNodeMenu) return;
+
+    const { sourceNodeId } = addNodeMenu;
     const sourceNode = nodes.find(n => n.id === sourceNodeId);
     if (!sourceNode) return;
 
@@ -44,11 +57,16 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
       y: sourceNode.position.y + 120,
     };
 
+    let data = { label: `${nodeType} узел` };
+    if (nodeType === 'telegram') {
+        data = { message: 'Новое сообщение' };
+    }
+
     const newNode = {
       id: getId(),
-      type: 'default',
+      type: nodeType,
       position: newNodePosition,
-      data: { label: 'Новый узел' },
+      data,
     };
 
     const newEdge = {
@@ -59,7 +77,8 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
 
     setNodes((nds) => nds.concat(newNode));
     setEdges((eds) => eds.concat(newEdge));
-  }, [nodes]);
+    setAddNodeMenu(null); // Закрываем меню
+  }, [addNodeMenu, nodes]);
 
   const nodesWithCallbacks = nodes.map(node => ({
     ...node,
@@ -219,7 +238,7 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
     });
   }, []);
 
-  const onPaneClick = useCallback(() => { setMenu(null); setSettingsNode(null); }, []);
+  const onPaneClick = useCallback(() => { setMenu(null); setSettingsNode(null); setAddNodeMenu(null); }, []);
 
   const createNewNode = (type, position, data) => {
     const newNode = { id: getId(), type, position, data };
@@ -280,6 +299,7 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
         </ReactFlow>
         {menu?.type === 'node' && <NodeContextMenu {...menu} onAction={handleMenuAction} />}
         {menu?.type === 'pane' && <PaneContextMenu {...menu} onAction={handleMenuAction} />}
+        {addNodeMenu && <AddNodeMenu {...addNodeMenu} onSelectNode={handleAddNodeFromMenu} />}
         <div className="editor-controls">
           <button onClick={onBack} className="back-button">&larr; Назад</button>
           <button onClick={handleSave} className="save-button">Сохранить</button>
