@@ -88,4 +88,3 @@ function SettingsPanel({
 }
 
 export default SettingsPanel;
-s
