@@ -1,0 +1,10 @@
+@import './commonNodeStyles.css';
+
+.input-node {
+  padding: 10px 20px;
+  border-radius: 3px;
+  background: white;
+  border: 1px solid #0041d0;
+  color: #333;
+  text-align: center;
+}

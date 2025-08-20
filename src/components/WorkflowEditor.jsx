@@ -5,6 +5,9 @@ import 'reactflow/dist/style.css';
 import Sidebar from './Sidebar';
 import TelegramNode from './customNodes/TelegramNode';
 import TelegramTriggerNode from './customNodes/TelegramTriggerNode';
+import InputNode from './customNodes/InputNode';
+import DefaultNode from './customNodes/DefaultNode';
+import OutputNode from './customNodes/OutputNode';
 import NodeContextMenu from './NodeContextMenu';
 import PaneContextMenu from './PaneContextMenu';
 import SettingsPanel from './SettingsPanel';
@@ -13,6 +16,10 @@ import './WorkflowEditor.css';
 const nodeTypes = {
   telegram: TelegramNode,
   telegramTrigger: TelegramTriggerNode,
+  // Регистрируем наши новые кастомные версии для стандартных типов
+  input: InputNode,
+  default: DefaultNode,
+  output: OutputNode,
 };
 let id = 0;
 const getId = () => `dndnode_${id++}`;
