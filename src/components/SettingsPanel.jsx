@@ -9,8 +9,8 @@ function SettingsPanel({
     workflowId,
     onSetWebhook,
     isSettingWebhook,
-    onDeleteWebhook,
-    isDeletingWebhook 
+    onDeleteWebhook, // Новая функция
+    isDeletingWebhook // Новое состояние
 }) {
   const [botToken, setBotToken] = useState(node.data.botToken || '');
   const [chatId, setChatId] = useState(node.data.chatId || '');
@@ -54,15 +54,15 @@ function SettingsPanel({
           <div className="button-group">
             <button 
               className="activate-button" 
-              onClick={() => onSetWebhook(botToken)}
-              disabled={isSettingWebhook || !botToken}
+              onClick={() => onSetWebhook(node.data.botToken)}
+              disabled={isSettingWebhook || !node.data.botToken}
             >
               {isSettingWebhook ? '...' : 'Активировать'}
             </button>
             <button 
               className="deactivate-button"
-              onClick={() => onDeleteWebhook(botToken)}
-              disabled={isDeletingWebhook || !botToken}
+              onClick={() => onDeleteWebhook(node.data.botToken)}
+              disabled={isDeletingWebhook || !node.data.botToken}
             >
               {isDeletingWebhook ? '...' : 'Деактивировать'}
             </button>

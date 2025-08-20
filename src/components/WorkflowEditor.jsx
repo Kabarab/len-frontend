@@ -81,19 +81,16 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
     .catch(err => alert('Ошибка выполнения!'));
   };
 
-  // --- ИСПРАВЛЕННАЯ ФУНКЦИЯ ---
   const updateNodeData = (nodeId, newData) => {
     setNodes((nds) =>
       nds.map((node) => {
         if (node.id === nodeId) {
-          // Создаем новый объект узла с новыми данными, а не мутируем старый
-          return { ...node, data: { ...node.data, ...newData } };
+          node.data = { ...node.data, ...newData };
         }
         return node;
       })
     );
-    // Не закрываем панель, чтобы пользователь видел результат
-    // setSettingsNode(null); 
+    setSettingsNode(null);
   };
 
   const handleGetChatId = async (botToken) => {
