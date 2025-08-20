@@ -86,3 +86,25 @@
     border-top: 1px solid #ddd;
     margin: 20px 0;
 }
+
+.webhook-url-wrapper {
+    display: flex;
+    gap: 5px;
+    margin-top: 5px;
+}
+.webhook-url-wrapper input {
+    flex-grow: 1;
+    background-color: #eee;
+}
+.instructions-list {
+    padding-left: 20px;
+    font-size: 14px;
+}
+.instructions-list li {
+    margin-bottom: 10px;
+}
+.settings-body hr {
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 20px 0;
+}

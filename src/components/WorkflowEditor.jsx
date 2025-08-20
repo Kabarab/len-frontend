@@ -5,21 +5,14 @@ import 'reactflow/dist/style.css';
 import Sidebar from './Sidebar';
 import TelegramNode from './customNodes/TelegramNode';
 import TelegramTriggerNode from './customNodes/TelegramTriggerNode';
-import InputNode from './customNodes/InputNode';
-import DefaultNode from './customNodes/DefaultNode';
-import OutputNode from './customNodes/OutputNode';
 import NodeContextMenu from './NodeContextMenu';
 import PaneContextMenu from './PaneContextMenu';
 import SettingsPanel from './SettingsPanel';
-import AddNodeMenu from './AddNodeMenu';
 import './WorkflowEditor.css';
 
 const nodeTypes = {
   telegram: TelegramNode,
   telegramTrigger: TelegramTriggerNode,
-  input: InputNode,
-  default: DefaultNode,
-  output: OutputNode,
 };
 let id = 0;
 const getId = () => `dndnode_${id++}`;
@@ -30,43 +23,10 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
   const [edges, setEdges] = useState([]);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
   const [menu, setMenu] = useState(null);
-  const [addNodeMenu, setAddNodeMenu] = useState(null);
   const [settingsNode, setSettingsNode] = useState(null);
   const [isFetchingChatId, setIsFetchingChatId] = useState(false);
   const [isSettingWebhook, setIsSettingWebhook] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  const handleAddNode = useCallback((sourceNodeId, event) => {
-    const pane = reactFlowWrapper.current.getBoundingClientRect();
-    setAddNodeMenu({
-      sourceNodeId,
-      top: event.clientY - pane.top + 10,
-      left: event.clientX - pane.left,
-    });
-  }, []);
-
-  const handleAddNodeFromMenu = useCallback((nodeType) => {
-    if (!addNodeMenu) return;
-    const { sourceNodeId } = addNodeMenu;
-    const sourceNode = nodes.find(n => n.id === sourceNodeId);
-    if (!sourceNode) return;
-
-    const newNodePosition = { x: sourceNode.position.x, y: sourceNode.position.y + 120 };
-    let data = { label: `${nodeType} узел` };
-    if (nodeType === 'telegram') { data = { message: 'Новое сообщение' }; }
-
-    const newNode = { id: getId(), type: nodeType, position: newNodePosition, data };
-    const newEdge = { id: `e${sourceNodeId}-${newNode.id}`, source: sourceNodeId, target: newNode.id };
-
-    setNodes((nds) => nds.concat(newNode));
-    setEdges((eds) => eds.concat(newEdge));
-    setAddNodeMenu(null);
-  }, [addNodeMenu, nodes]);
-
-  const nodesWithCallbacks = nodes.map(node => ({
-    ...node,
-    data: { ...node.data, onAddNode: handleAddNode },
-  }));
 
   useEffect(() => {
     getAuthHeaders().then(headers => {
@@ -108,14 +68,10 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
 
   const handleSave = async () => {
     const headers = await getAuthHeaders();
-    const nodesToSave = nodes.map(({ data, ...rest }) => {
-        const { onAddNode, ...restData } = data;
-        return { ...rest, data: restData };
-    });
     fetch(`${import.meta.env.VITE_API_URL}/api/workflows/${workflowId}`, {
       method: 'PUT',
       headers,
-      body: JSON.stringify({ nodes: nodesToSave, edges }),
+      body: JSON.stringify({ nodes, edges }),
     })
     .then(res => res.json())
     .then(data => alert('Процесс сохранен!'))
@@ -173,26 +129,6 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
     }
   };
 
-  const handleSetWebhook = async (botToken) => {
-    setIsSettingWebhook(true);
-    try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/telegram/set-webhook`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token: botToken, workflowId: workflowId }),
-        });
-        const data = await response.json();
-        if (!response.ok) {
-            throw new Error(data.message || 'Неизвестная ошибка');
-        }
-        alert(data.message);
-    } catch (error) {
-        alert(`Ошибка активации триггера: ${error.message}`);
-    } finally {
-        setIsSettingWebhook(false);
-    }
-  };
-
   const onNodeContextMenu = useCallback((event, node) => {
     event.preventDefault();
     const pane = reactFlowWrapper.current.getBoundingClientRect();
@@ -221,7 +157,7 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
     });
   }, []);
 
-  const onPaneClick = useCallback(() => { setMenu(null); setSettingsNode(null); setAddNodeMenu(null); }, []);
+  const onPaneClick = useCallback(() => { setMenu(null); setSettingsNode(null); }, []);
 
   const createNewNode = (type, position, data) => {
     const newNode = { id: getId(), type, position, data };
@@ -236,35 +172,12 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
       }
     } else if (action === 'deleteNode' && menu.type === 'node') {
       setNodes((nds) => nds.filter((node) => node.id !== menu.id));
-    } else if (menu.type === 'pane') {
-        const position = reactFlowInstance.screenToFlowPosition({ x: menu.left, y: menu.top });
-        let nodeType = '';
-        let data = {};
-        switch(action) {
-            case 'addTelegramTriggerNode':
-                nodeType = 'telegramTrigger';
-                data = { label: 'Триггер Telegram' };
-                break;
-            case 'addTelegramNode':
-                nodeType = 'telegram';
-                data = { message: 'Новое сообщение' };
-                break;
-            case 'addInputNode':
-                nodeType = 'input';
-                data = { label: 'Узел входа' };
-                break;
-            case 'addDefaultNode':
-                nodeType = 'default';
-                data = { label: 'Новый узел' };
-                break;
-            case 'addOutputNode':
-                nodeType = 'output';
-                data = { label: 'Узел выхода' };
-                break;
-            default:
-                return;
-        }
-        createNewNode(nodeType, position, data);
+    } else if (action === 'addTelegramNode' && menu.type === 'pane') {
+      const position = reactFlowInstance.screenToFlowPosition({ x: menu.left, y: menu.top });
+      createNewNode('telegram', position, { message: 'Новое сообщение' });
+    } else if (action === 'addDefaultNode' && menu.type === 'pane') {
+      const position = reactFlowInstance.screenToFlowPosition({ x: menu.left, y: menu.top });
+      createNewNode('default', position, { label: 'Новый узел' });
     }
     setMenu(null);
   }, [menu, nodes, reactFlowInstance]);
@@ -281,7 +194,7 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
       <Sidebar onNodeClick={handleNodeClickFromSidebar} className={isSidebarOpen ? 'open' : ''} />
       <div className="workflow-editor-container" ref={reactFlowWrapper}>
         <ReactFlow
-          nodes={nodesWithCallbacks}
+          nodes={nodes}
           edges={edges}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
@@ -305,7 +218,6 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
         </ReactFlow>
         {menu?.type === 'node' && <NodeContextMenu {...menu} onAction={handleMenuAction} />}
         {menu?.type === 'pane' && <PaneContextMenu {...menu} onAction={handleMenuAction} />}
-        {addNodeMenu && <AddNodeMenu {...addNodeMenu} onSelectNode={handleAddNodeFromMenu} />}
         <div className="editor-controls">
           <button onClick={onBack} className="back-button">&larr; Назад</button>
           <button onClick={handleSave} className="save-button">Сохранить</button>
