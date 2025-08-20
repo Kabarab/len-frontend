@@ -197,7 +197,7 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
       setNodes((nds) => nds.filter((node) => node.id !== menu.id));
     } else if (action === 'addTelegramNode' && menu.type === 'pane') {
       const position = reactFlowInstance.screenToFlowPosition({ x: menu.left, y: menu.top });
-      createNewNode('telegram', position, { message: 'Новое сообщение' });
+      createNewNode('telegram', position, { message: '{{trigger.message.text}}' });
     } else if (action === 'addDefaultNode' && menu.type === 'pane') {
       const position = reactFlowInstance.screenToFlowPosition({ x: menu.left, y: menu.top });
       createNewNode('default', position, { label: 'Новый узел' });
