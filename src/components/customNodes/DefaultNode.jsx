@@ -4,7 +4,7 @@ import './DefaultNode.css';
 function DefaultNode({ id, data }) {
   const onPlusClick = (event) => {
     event.stopPropagation();
-    data.onAddNode(id, event); // Передаем событие клика
+    data.onAddNode(id, event);
   };
 
   return (

@@ -4,7 +4,7 @@ import './TelegramTriggerNode.css';
 function TelegramTriggerNode({ id, data }) {
   const onPlusClick = (event) => {
     event.stopPropagation();
-    data.onAddNode(id, event); // Передаем событие клика
+    data.onAddNode(id, event);
   };
 
   return (
@@ -18,7 +18,6 @@ function TelegramTriggerNode({ id, data }) {
       </div>
       <Handle type="source" position={Position.Bottom} className="custom-handle" />
 
-      {/* Наша новая кнопка "+" */}
       <div className="add-node-button" onClick={onPlusClick}>+</div>
     </div>
   );

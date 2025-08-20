@@ -3,7 +3,7 @@ import './TelegramNode.css';
 
 function TelegramNode({ id, data }) {
   const onPlusClick = (event) => {
-    event.stopPropagation();
+    event.stopPropagation(); // Останавливаем всплытие события
     data.onAddNode(id, event); // Передаем событие клика
   };
 
