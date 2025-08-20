@@ -26,7 +26,7 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
   const [settingsNode, setSettingsNode] = useState(null);
   const [isFetchingChatId, setIsFetchingChatId] = useState(false);
   const [isSettingWebhook, setIsSettingWebhook] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isDeletingWebhook, setIsDeletingWebhook] = useState(false);
 
   useEffect(() => {
     getAuthHeaders().then(headers => {
@@ -53,17 +53,6 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
     const position = reactFlowInstance.screenToFlowPosition({ x: event.clientX, y: event.clientY });
     const newNode = { id: getId(), type, position, data };
     setNodes((nds) => nds.concat(newNode));
-  }, [reactFlowInstance]);
-
-  const handleNodeClickFromSidebar = useCallback((type, data) => {
-    if (!reactFlowInstance) return;
-    const position = reactFlowInstance.screenToFlowPosition({
-        x: reactFlowWrapper.current.clientWidth / 2,
-        y: reactFlowWrapper.current.clientHeight / 2,
-    });
-    const newNode = { id: getId(), type, position, data };
-    setNodes((nds) => nds.concat(newNode));
-    setIsSidebarOpen(false);
   }, [reactFlowInstance]);
 
   const handleSave = async () => {
@@ -129,6 +118,46 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
     }
   };
 
+  const handleSetWebhook = async (botToken) => {
+    setIsSettingWebhook(true);
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/telegram/set-webhook`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: botToken, workflowId: workflowId }),
+        });
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.message || 'Неизвестная ошибка');
+        }
+        alert(data.message);
+    } catch (error) {
+        alert(`Ошибка активации триггера: ${error.message}`);
+    } finally {
+        setIsSettingWebhook(false);
+    }
+  };
+
+  const handleDeleteWebhook = async (botToken) => {
+    setIsDeletingWebhook(true);
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/telegram/delete-webhook`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: botToken }),
+        });
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.message || 'Неизвестная ошибка');
+        }
+        alert(data.message);
+    } catch (error) {
+        alert(`Ошибка деактивации триггера: ${error.message}`);
+    } finally {
+        setIsDeletingWebhook(false);
+    }
+  };
+
   const onNodeContextMenu = useCallback((event, node) => {
     event.preventDefault();
     const pane = reactFlowWrapper.current.getBoundingClientRect();
@@ -140,12 +169,6 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
       left: event.clientX - pane.left,
     });
   }, []);
-
-  const onNodeClick = useCallback((event, node) => {
-    if (window.innerWidth < 768) {
-      onNodeContextMenu(event, node);
-    }
-  }, [onNodeContextMenu]);
 
   const onPaneContextMenu = useCallback((event) => {
     event.preventDefault();
@@ -190,8 +213,7 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
 
   return (
     <div className="editor-layout">
-      <button className="mobile-sidebar-toggle" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>☰</button>
-      <Sidebar onNodeClick={handleNodeClickFromSidebar} className={isSidebarOpen ? 'open' : ''} />
+      <Sidebar />
       <div className="workflow-editor-container" ref={reactFlowWrapper}>
         <ReactFlow
           nodes={nodes}
@@ -204,7 +226,6 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
           onDragOver={onDragOver}
           nodeTypes={nodeTypes}
           onNodeContextMenu={onNodeContextMenu}
-          onNodeClick={onNodeClick}
           onPaneContextMenu={onPaneContextMenu}
           onPaneClick={onPaneClick}
           onMoveStart={onPaneClick}
@@ -233,6 +254,8 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
             workflowId={workflowId}
             onSetWebhook={handleSetWebhook}
             isSettingWebhook={isSettingWebhook}
+            onDeleteWebhook={handleDeleteWebhook}
+            isDeletingWebhook={isDeletingWebhook}
         />
       )}
     </div>

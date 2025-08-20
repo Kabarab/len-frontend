@@ -1,12 +1,20 @@
 import { useState, useEffect } from 'react';
 import './SettingsPanel.css';
 
-function SettingsPanel({ node, onSave, onGetChatId, isFetchingChatId, workflowId }) {
+function SettingsPanel({ 
+    node, 
+    onSave, 
+    onGetChatId, 
+    isFetchingChatId, 
+    workflowId,
+    onSetWebhook,
+    isSettingWebhook,
+    onDeleteWebhook, // Новая функция
+    isDeletingWebhook // Новое состояние
+}) {
   const [botToken, setBotToken] = useState(node.data.botToken || '');
   const [chatId, setChatId] = useState(node.data.chatId || '');
   const [message, setMessage] = useState(node.data.message || '');
-
-  const webhookUrl = `http://localhost:3000/api/webhooks/telegram/${workflowId}`;
 
   useEffect(() => {
     setBotToken(node.data.botToken || '');
@@ -14,8 +22,12 @@ function SettingsPanel({ node, onSave, onGetChatId, isFetchingChatId, workflowId
     setMessage(node.data.message || '');
   }, [node.id]);
 
-  const handleSave = () => {
+  const handleActionNodeSave = () => {
     onSave(node.id, { botToken, chatId, message });
+  };
+
+  const handleTriggerNodeSave = () => {
+    onSave(node.id, { botToken });
   };
 
   const handleGetChatId = async () => {
@@ -25,32 +37,37 @@ function SettingsPanel({ node, onSave, onGetChatId, isFetchingChatId, workflowId
       }
   };
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(webhookUrl);
-    alert('URL скопирован в буфер обмена!');
-  };
-
   if (node.type === 'telegramTrigger') {
     return (
       <aside className="settings-panel">
         <div className="settings-header">Настройки Триггера</div>
         <div className="settings-body">
-          <label>Ваш Webhook URL:</label>
-          <p>Это уникальный адрес, на который Telegram будет присылать сообщения, адресованные вашему боту.</p>
-          <div className="webhook-url-wrapper">
-            <input type="text" value={webhookUrl} readOnly />
-            <button onClick={copyToClipboard}>Копировать</button>
-          </div>
+          <label>1. Токен Бота:</label>
+          <p>Вставьте сюда токен вашего Telegram-бота и примените его.</p>
+          <input type="text" value={botToken} onChange={(e) => setBotToken(e.target.value)} />
+          <button className="save-settings-button" onClick={handleTriggerNodeSave}>
+            Применить токен
+          </button>
           <hr />
-          <h4>Как это настроить:</h4>
-          <ol className="instructions-list">
-            <li>Откройте Telegram и найдите бота <strong>@BotFather</strong>.</li>
-            <li>Отправьте ему команду <code>/setwebhook</code>.</li>
-            <li>Выберите вашего бота из списка.</li>
-            <li>Вставьте скопированный URL и отправьте его.</li>
-          </ol>
-          <p><strong>Что это даст?</strong> Как только вы это сделаете, ваш рабочий процесс будет автоматически запускаться каждый раз, когда кто-то напишет вашему боту.</p>
-          <small>Примечание: Этот URL будет работать только после развертывания бэкенда в интернете.</small>
+          <label>2. Управление Вебхуком:</label>
+          <p>Активируйте триггер, чтобы начать получать сообщения, или деактивируйте, чтобы использовать другие методы.</p>
+          <div className="button-group">
+            <button 
+              className="activate-button" 
+              onClick={() => onSetWebhook(node.data.botToken)}
+              disabled={isSettingWebhook || !node.data.botToken}
+            >
+              {isSettingWebhook ? '...' : 'Активировать'}
+            </button>
+            <button 
+              className="deactivate-button"
+              onClick={() => onDeleteWebhook(node.data.botToken)}
+              disabled={isDeletingWebhook || !node.data.botToken}
+            >
+              {isDeletingWebhook ? '...' : 'Деактивировать'}
+            </button>
+          </div>
+          <small>Примечание: Активация будет работать только после развертывания бэкенда в интернете.</small>
         </div>
       </aside>
     );
@@ -74,9 +91,9 @@ function SettingsPanel({ node, onSave, onGetChatId, isFetchingChatId, workflowId
 
         <label>Сообщение:</label>
         <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows="4"></textarea>
-        <small>Используйте {'`{{trigger.message.text}}`'} чтобы вставить текст из триггера, и {'`{{trigger.message.text}}`'} для ID чата.</small>
+        <small>Используйте {'`{{trigger.message.text}}`'} чтобы вставить текст из триггера, и {'`{{trigger.message.chat.id}}`'} для ID чата.</small>
       </div>
-      <button className="save-settings-button" onClick={handleSave}>Применить настройки</button>
+      <button className="save-settings-button" onClick={handleActionNodeSave}>Применить настройки</button>
     </aside>
   );
 }
