@@ -26,3 +26,43 @@
 .add-workflow-button:hover {
   background-color: #0056b3;
 }
+
+.add-workflow-form {
+  display: flex;
+  margin-bottom: 24px;
+}
+
+.add-workflow-input {
+  flex-grow: 1;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1em;
+  margin-right: 12px;
+}
+
+.add-workflow-button {
+  padding: 12px 20px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 8px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.add-workflow-button:hover {
+  background-color: #0056b3;
+}
+
+/* --- Адаптивность --- */
+@media (max-width: 768px) {
+  .add-workflow-form {
+    flex-direction: column; /* Ставим элементы в колонку */
+    gap: 10px; /* Добавляем отступ между ними */
+  }
+  .add-workflow-input {
+    margin-right: 0; /* Убираем правый отступ */
+  }
+}

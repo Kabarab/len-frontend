@@ -114,3 +114,51 @@ body,
 .logout-button:hover {
   background-color: #f5c6cb;
 }
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  box-sizing: border-box;
+  background-color: #fdfdfd;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+.app-container {
+  padding: 30px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.logout-button {
+  padding: 8px 16px;
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.logout-button:hover {
+  background-color: #f5c6cb;
+}
+
+/* --- Адаптивность --- */
+@media (max-width: 768px) {
+  .app-container {
+    padding: 15px;
+  }
+}
