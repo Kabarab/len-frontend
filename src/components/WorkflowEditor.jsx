@@ -43,7 +43,7 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
   const onEdgesChange = useCallback((changes) => setEdges((eds) => applyEdgeChanges(changes, eds)), []);
   const onConnect = useCallback((connection) => setEdges((eds) => addEdge(connection, eds)), []);
   const onDragOver = useCallback((event) => { event.preventDefault(); event.dataTransfer.dropEffect = 'move'; }, []);
-  
+
   const onDrop = useCallback((event) => {
     event.preventDefault();
     const type = event.dataTransfer.getData('application/reactflow');
@@ -81,16 +81,19 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
     .catch(err => alert('Ошибка выполнения!'));
   };
 
+  // --- ИСПРАВЛЕННАЯ ФУНКЦИЯ ---
   const updateNodeData = (nodeId, newData) => {
     setNodes((nds) =>
       nds.map((node) => {
         if (node.id === nodeId) {
-          node.data = { ...node.data, ...newData };
+          // Создаем новый объект узла с новыми данными, а не мутируем старый
+          return { ...node, data: { ...node.data, ...newData } };
         }
         return node;
       })
     );
-    setSettingsNode(null);
+    // Не закрываем панель, чтобы пользователь видел результат
+    // setSettingsNode(null); 
   };
 
   const handleGetChatId = async (botToken) => {
@@ -137,7 +140,7 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
         setIsSettingWebhook(false);
     }
   };
-  
+
   const handleDeleteWebhook = async (botToken) => {
     setIsDeletingWebhook(true);
     try {
@@ -181,7 +184,7 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
   }, []);
 
   const onPaneClick = useCallback(() => { setMenu(null); setSettingsNode(null); }, []);
-  
+
   const createNewNode = (type, position, data) => {
     const newNode = { id: getId(), type, position, data };
     setNodes((nds) => nds.concat(newNode));
@@ -263,3 +266,4 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
 }
 
 export default WorkflowEditor;
+е
