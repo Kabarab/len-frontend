@@ -8,7 +8,7 @@ function SettingsPanel({
     isFetchingChatId, 
     workflowId,
     onSetWebhook,
-    isSettingWebhook
+    isSettingWebhook 
 }) {
   const [botToken, setBotToken] = useState(node.data.botToken || '');
   const [chatId, setChatId] = useState(node.data.chatId || '');
@@ -20,8 +20,12 @@ function SettingsPanel({
     setMessage(node.data.message || '');
   }, [node.id]);
 
-  const handleSave = () => {
+  const handleActionNodeSave = () => {
     onSave(node.id, { botToken, chatId, message });
+  };
+
+  const handleTriggerNodeSave = () => {
+    onSave(node.id, { botToken });
   };
 
   const handleGetChatId = async () => {
@@ -31,35 +35,33 @@ function SettingsPanel({
       }
   };
 
-  // В зависимости от типа узла, показываем разные настройки
   if (node.type === 'telegramTrigger') {
     return (
       <aside className="settings-panel">
-        <div className="settings-header">Настройки Триггера Telegram</div>
+        <div className="settings-header">Настройки Триггера</div>
         <div className="settings-body">
-          <label>Токен Бота:</label>
-          <p>Вставьте сюда токен вашего Telegram-бота, чтобы активировать триггер.</p>
-          <input 
-            type="text" 
-            value={botToken} 
-            onChange={(e) => setBotToken(e.target.value)} 
-            placeholder="123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"
-          />
+          <label>1. Токен Бота:</label>
+          <p>Вставьте сюда токен вашего Telegram-бота и примените его.</p>
+          <input type="text" value={botToken} onChange={(e) => setBotToken(e.target.value)} />
+          <button className="save-settings-button" onClick={handleTriggerNodeSave}>
+            Применить токен
+          </button>
+          <hr />
+          <label>2. Активация:</label>
+          <p>После применения токена, активируйте триггер.</p>
           <button 
-            className="save-settings-button" 
-            onClick={() => onSetWebhook(botToken)}
-            disabled={isSettingWebhook || !botToken}
+            className="activate-button" 
+            onClick={() => onSetWebhook(node.data.botToken)}
+            disabled={isSettingWebhook || !node.data.botToken}
           >
             {isSettingWebhook ? 'Активация...' : 'Активировать триггер'}
           </button>
-          <hr />
-          <p>После активации ваш рабочий процесс будет автоматически запускаться каждый раз, когда кто-то напишет вашему боту.</p>
+          <small>Примечание: Активация будет работать только после развертывания бэкенда в интернете.</small>
         </div>
       </aside>
     );
   }
 
-  // Настройки по умолчанию для узла-действия Telegram
   return (
     <aside className="settings-panel">
       <div className="settings-header">Настройки узла: {node.data.label || 'Telegram'}</div>
@@ -80,9 +82,10 @@ function SettingsPanel({
         <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows="4"></textarea>
         <small>Используйте {'`{{trigger.message.text}}`'} чтобы вставить текст из триггера, и {'`{{trigger.message.chat.id}}`'} для ID чата.</small>
       </div>
-      <button className="save-settings-button" onClick={handleSave}>Применить настройки</button>
+      <button className="save-settings-button" onClick={handleActionNodeSave}>Применить настройки</button>
     </aside>
   );
 }
 
 export default SettingsPanel;
+s

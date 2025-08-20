@@ -48,7 +48,8 @@
     color: #666;
 }
 .save-settings-button {
-  margin: 15px;
+  margin-top: 10px;
+  width: 100%;
   padding: 12px;
   background-color: #28a745;
   color: white;
@@ -57,13 +58,22 @@
   cursor: pointer;
   font-size: 16px;
 }
-
-.webhook-url-wrapper {
-    display: flex;
-    gap: 5px;
-    margin-top: 5px;
+.activate-button {
+  margin-top: 10px;
+  width: 100%;
+  padding: 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
 }
-.webhook-url-wrapper input {
-    flex-grow: 1;
-    background-color: #eee;
+.activate-button:disabled {
+    background-color: #a0a0a0;
+}
+.settings-body hr {
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 20px 0;
 }
