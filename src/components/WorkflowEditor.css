@@ -1,12 +1,12 @@
-/* Новый главный контейнер для редактора и сайдбара */
 .editor-layout {
   display: flex;
   width: 100vw;
   height: 100vh;
+  position: relative; /* Для позиционирования кнопки меню */
 }
 
 .workflow-editor-container {
-  flex-grow: 1; /* Занимает все оставшееся пространство */
+  flex-grow: 1;
   height: 100%;
   position: relative;
 }
@@ -14,14 +14,13 @@
 .editor-controls {
   position: absolute;
   top: 15px;
-  right: 15px; /* Переместили кнопки вправо для удобства */
-  left: auto;
+  right: 15px;
   z-index: 10;
   display: flex;
   gap: 10px;
 }
 
-.back-button, .save-button {
+.back-button, .save-button, .run-button {
   padding: 8px 16px;
   background-color: white;
   border: 1px solid #ccc;
@@ -34,16 +33,62 @@
   color: white;
   border-color: #28a745;
 }
+
 .run-button {
-  padding: 8px 16px;
   background-color: #007bff;
   color: white;
-  border: 1px solid #007bff;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.2s;
+  border-color: #007bff;
 }
 
-.run-button:hover {
-  background-color: #0069d9;
+/* --- НОВЫЕ СТИЛИ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ --- */
+
+/* Кнопка для открытия меню на мобильных */
+.mobile-sidebar-toggle {
+    display: none; /* Скрыта по умолчанию на больших экранах */
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    z-index: 20;
+    padding: 8px 12px;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+@media (max-width: 768px) {
+  .editor-layout .sidebar {
+    /* Делаем сайдбар всплывающим поверх холста */
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 15;
+    transform: translateX(-100%); /* Прячем за левый край */
+    transition: transform 0.3s ease-in-out;
+    height: 100%;
+  }
+
+  .editor-layout .sidebar.open {
+    transform: translateX(0); /* Показываем по классу 'open' */
+  }
+
+  .mobile-sidebar-toggle {
+    display: block; /* Показываем кнопку на мобильных */
+  }
+
+  .editor-controls {
+    /* Уменьшаем кнопки и ставим их справа */
+    top: 10px;
+    right: 10px;
+    gap: 5px;
+  }
+  .back-button, .save-button, .run-button {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  /* Скрываем панель настроек на мобильных, так как она будет перекрывать все */
+  .editor-layout .settings-panel {
+    display: none;
+  }
 }

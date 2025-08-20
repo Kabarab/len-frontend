@@ -1,6 +1,6 @@
 import './Sidebar.css';
 
-function Sidebar() {
+function Sidebar({ onNodeClick, className }) { // Принимаем className
   const onDragStart = (event, nodeType, defaultData) => {
     event.dataTransfer.setData('application/reactflow', nodeType);
     if (defaultData) {
@@ -10,11 +10,12 @@ function Sidebar() {
   };
 
   return (
-    <aside className="sidebar">
+    // Добавляем className для управления видимостью
+    <aside className={`sidebar ${className}`}>
       <div className="sidebar-header">Триггеры</div>
-      {/* Наш новый триггер */}
       <div
         className="sidebar-node trigger"
+        onClick={() => onNodeClick('telegramTrigger', { label: 'Триггер Telegram' })}
         onDragStart={(event) => onDragStart(event, 'telegramTrigger', { label: 'Триггер Telegram' })}
         draggable
       >
@@ -25,6 +26,7 @@ function Sidebar() {
 
       <div
         className="sidebar-node telegram"
+        onClick={() => onNodeClick('telegram', { message: 'Новое сообщение' })}
         onDragStart={(event) => onDragStart(event, 'telegram', { message: 'Новое сообщение' })}
         draggable
       >
@@ -33,6 +35,7 @@ function Sidebar() {
 
       <div 
         className="sidebar-node input" 
+        onClick={() => onNodeClick('input', { label: 'Узел входа' })}
         onDragStart={(event) => onDragStart(event, 'input')} 
         draggable
       >
@@ -40,6 +43,7 @@ function Sidebar() {
       </div>
       <div 
         className="sidebar-node" 
+        onClick={() => onNodeClick('default', { label: 'Стандартный узел' })}
         onDragStart={(event) => onDragStart(event, 'default')} 
         draggable
       >
@@ -47,6 +51,7 @@ function Sidebar() {
       </div>
       <div 
         className="sidebar-node output" 
+        onClick={() => onNodeClick('output', { label: 'Узел выхода' })}
         onDragStart={(event) => onDragStart(event, 'output')} 
         draggable
       >

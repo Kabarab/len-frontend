@@ -26,6 +26,7 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
   const [settingsNode, setSettingsNode] = useState(null);
   const [isFetchingChatId, setIsFetchingChatId] = useState(false);
   const [isSettingWebhook, setIsSettingWebhook] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Состояние для мобильного меню
 
   useEffect(() => {
     getAuthHeaders().then(headers => {
@@ -52,6 +53,17 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
     const position = reactFlowInstance.screenToFlowPosition({ x: event.clientX, y: event.clientY });
     const newNode = { id: getId(), type, position, data };
     setNodes((nds) => nds.concat(newNode));
+  }, [reactFlowInstance]);
+
+  const handleNodeClickFromSidebar = useCallback((type, data) => {
+    if (!reactFlowInstance) return;
+    const position = reactFlowInstance.screenToFlowPosition({
+        x: reactFlowWrapper.current.clientWidth / 2,
+        y: reactFlowWrapper.current.clientHeight / 2,
+    });
+    const newNode = { id: getId(), type, position, data };
+    setNodes((nds) => nds.concat(newNode));
+    setIsSidebarOpen(false);
   }, [reactFlowInstance]);
 
   const handleSave = async () => {
@@ -192,7 +204,10 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
 
   return (
     <div className="editor-layout">
-      <Sidebar />
+      <button className="mobile-sidebar-toggle" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+        ☰
+      </button>
+      <Sidebar onNodeClick={handleNodeClickFromSidebar} className={isSidebarOpen ? 'open' : ''} />
       <div className="workflow-editor-container" ref={reactFlowWrapper}>
         <ReactFlow
           nodes={nodes}
