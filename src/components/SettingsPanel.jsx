@@ -1,12 +1,18 @@
 import { useState, useEffect } from 'react';
 import './SettingsPanel.css';
 
-function SettingsPanel({ node, onSave, onGetChatId, isFetchingChatId, workflowId, onSetWebhook, isSettingWebhook }) {
+function SettingsPanel({ 
+    node, 
+    onSave, 
+    onGetChatId, 
+    isFetchingChatId, 
+    workflowId,
+    onSetWebhook,
+    isSettingWebhook
+}) {
   const [botToken, setBotToken] = useState(node.data.botToken || '');
   const [chatId, setChatId] = useState(node.data.chatId || '');
   const [message, setMessage] = useState(node.data.message || '');
-
-  const webhookUrl = `${import.meta.env.VITE_API_URL}/api/webhooks/telegram/${workflowId}`;
 
   useEffect(() => {
     setBotToken(node.data.botToken || '');
@@ -25,19 +31,20 @@ function SettingsPanel({ node, onSave, onGetChatId, isFetchingChatId, workflowId
       }
   };
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(webhookUrl);
-    alert('URL скопирован в буфер обмена!');
-  };
-
+  // В зависимости от типа узла, показываем разные настройки
   if (node.type === 'telegramTrigger') {
     return (
       <aside className="settings-panel">
-        <div className="settings-header">Настройки Триггера</div>
+        <div className="settings-header">Настройки Триггера Telegram</div>
         <div className="settings-body">
           <label>Токен Бота:</label>
           <p>Вставьте сюда токен вашего Telegram-бота, чтобы активировать триггер.</p>
-          <input type="text" value={botToken} onChange={(e) => setBotToken(e.target.value)} />
+          <input 
+            type="text" 
+            value={botToken} 
+            onChange={(e) => setBotToken(e.target.value)} 
+            placeholder="123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"
+          />
           <button 
             className="save-settings-button" 
             onClick={() => onSetWebhook(botToken)}
@@ -46,17 +53,13 @@ function SettingsPanel({ node, onSave, onGetChatId, isFetchingChatId, workflowId
             {isSettingWebhook ? 'Активация...' : 'Активировать триггер'}
           </button>
           <hr />
-          <label>Ваш Webhook URL:</label>
-          <p>Это уникальный адрес, на который Telegram будет присылать сообщения, адресованные вашему боту.</p>
-          <div className="webhook-url-wrapper">
-            <input type="text" value={webhookUrl} readOnly />
-            <button onClick={copyToClipboard}>Копировать</button>
-          </div>
+          <p>После активации ваш рабочий процесс будет автоматически запускаться каждый раз, когда кто-то напишет вашему боту.</p>
         </div>
       </aside>
     );
   }
 
+  // Настройки по умолчанию для узла-действия Telegram
   return (
     <aside className="settings-panel">
       <div className="settings-header">Настройки узла: {node.data.label || 'Telegram'}</div>
