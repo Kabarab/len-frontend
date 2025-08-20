@@ -1,14 +1,29 @@
-// Импортируем все из нашего централизованного файла firebase.js
 import { auth, googleProvider, signInWithPopup } from '../firebase';
+import { GoogleAuthProvider } from "firebase/auth"; // Добавляем этот импорт
 
 function LoginPage() {
-  const handleGoogleLogin = async () => {
-    try {
-      await signInWithPopup(auth, googleProvider);
-      // После успешного входа, App.jsx автоматически обнаружит это
-    } catch (error) {
-      console.error("Ошибка входа через Google:", error);
-    }
+  const handleGoogleLogin = () => {
+    signInWithPopup(auth, googleProvider)
+      .then((result) => {
+        // Успешный вход
+        const user = result.user;
+        console.log('Успешный вход:', user);
+      })
+      .catch((error) => {
+        // Улучшенная обработка ошибок
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.error("Подробная ошибка входа через Google:", {
+            code: errorCode,
+            message: errorMessage,
+        });
+        // Показываем пользователю более понятное сообщение
+        if (errorCode === 'auth/popup-closed-by-user') {
+          alert('Окно входа было закрыто. Пожалуйста, попробуйте еще раз.');
+        } else {
+          alert(`Произошла ошибка входа: ${errorMessage}`);
+        }
+      });
   };
 
   return (
