@@ -26,38 +26,7 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
   const [settingsNode, setSettingsNode] = useState(null);
   const [isFetchingChatId, setIsFetchingChatId] = useState(false);
   const [isSettingWebhook, setIsSettingWebhook] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  const handleAddNode = useCallback((sourceNodeId) => {
-    const sourceNode = nodes.find(n => n.id === sourceNodeId);
-    if (!sourceNode) return;
-
-    const newNodePosition = {
-      x: sourceNode.position.x,
-      y: sourceNode.position.y + 120,
-    };
-
-    const newNode = {
-      id: getId(),
-      type: 'default',
-      position: newNodePosition,
-      data: { label: 'Новый узел' },
-    };
-
-    const newEdge = {
-      id: `e${sourceNodeId}-${newNode.id}`,
-      source: sourceNodeId,
-      target: newNode.id,
-    };
-
-    setNodes((nds) => nds.concat(newNode));
-    setEdges((eds) => eds.concat(newEdge));
-  }, [nodes]);
-
-  const nodesWithCallbacks = nodes.map(node => ({
-    ...node,
-    data: { ...node.data, onAddNode: handleAddNode },
-  }));
+  const [isDeletingWebhook, setIsDeletingWebhook] = useState(false);
 
   useEffect(() => {
     getAuthHeaders().then(headers => {
@@ -74,7 +43,7 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
   const onEdgesChange = useCallback((changes) => setEdges((eds) => applyEdgeChanges(changes, eds)), []);
   const onConnect = useCallback((connection) => setEdges((eds) => addEdge(connection, eds)), []);
   const onDragOver = useCallback((event) => { event.preventDefault(); event.dataTransfer.dropEffect = 'move'; }, []);
-
+  
   const onDrop = useCallback((event) => {
     event.preventDefault();
     const type = event.dataTransfer.getData('application/reactflow');
@@ -86,27 +55,12 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
     setNodes((nds) => nds.concat(newNode));
   }, [reactFlowInstance]);
 
-  const handleNodeClickFromSidebar = useCallback((type, data) => {
-    if (!reactFlowInstance) return;
-    const position = reactFlowInstance.screenToFlowPosition({
-        x: reactFlowWrapper.current.clientWidth / 2,
-        y: reactFlowWrapper.current.clientHeight / 2,
-    });
-    const newNode = { id: getId(), type, position, data };
-    setNodes((nds) => nds.concat(newNode));
-    setIsSidebarOpen(false);
-  }, [reactFlowInstance]);
-
   const handleSave = async () => {
     const headers = await getAuthHeaders();
-    const nodesToSave = nodes.map(({ data, ...rest }) => {
-        const { onAddNode, ...restData } = data;
-        return { ...rest, data: restData };
-    });
     fetch(`${import.meta.env.VITE_API_URL}/api/workflows/${workflowId}`, {
       method: 'PUT',
       headers,
-      body: JSON.stringify({ nodes: nodesToSave, edges }),
+      body: JSON.stringify({ nodes, edges }),
     })
     .then(res => res.json())
     .then(data => alert('Процесс сохранен!'))
@@ -183,6 +137,26 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
         setIsSettingWebhook(false);
     }
   };
+  
+  const handleDeleteWebhook = async (botToken) => {
+    setIsDeletingWebhook(true);
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/telegram/delete-webhook`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: botToken }),
+        });
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.message || 'Неизвестная ошибка');
+        }
+        alert(data.message);
+    } catch (error) {
+        alert(`Ошибка деактивации триггера: ${error.message}`);
+    } finally {
+        setIsDeletingWebhook(false);
+    }
+  };
 
   const onNodeContextMenu = useCallback((event, node) => {
     event.preventDefault();
@@ -196,12 +170,6 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
     });
   }, []);
 
-  const onNodeClick = useCallback((event, node) => {
-    if (window.innerWidth < 768) {
-      onNodeContextMenu(event, node);
-    }
-  }, [onNodeContextMenu]);
-
   const onPaneContextMenu = useCallback((event) => {
     event.preventDefault();
     const pane = reactFlowWrapper.current.getBoundingClientRect();
@@ -213,7 +181,7 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
   }, []);
 
   const onPaneClick = useCallback(() => { setMenu(null); setSettingsNode(null); }, []);
-
+  
   const createNewNode = (type, position, data) => {
     const newNode = { id: getId(), type, position, data };
     setNodes((nds) => nds.concat(newNode));
@@ -245,11 +213,10 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
 
   return (
     <div className="editor-layout">
-      <button className="mobile-sidebar-toggle" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>☰</button>
-      <Sidebar onNodeClick={handleNodeClickFromSidebar} className={isSidebarOpen ? 'open' : ''} />
+      <Sidebar />
       <div className="workflow-editor-container" ref={reactFlowWrapper}>
         <ReactFlow
-          nodes={nodesWithCallbacks}
+          nodes={nodes}
           edges={edges}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
@@ -259,7 +226,6 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
           onDragOver={onDragOver}
           nodeTypes={nodeTypes}
           onNodeContextMenu={onNodeContextMenu}
-          onNodeClick={onNodeClick}
           onPaneContextMenu={onPaneContextMenu}
           onPaneClick={onPaneClick}
           onMoveStart={onPaneClick}
@@ -288,6 +254,8 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
             workflowId={workflowId}
             onSetWebhook={handleSetWebhook}
             isSettingWebhook={isSettingWebhook}
+            onDeleteWebhook={handleDeleteWebhook}
+            isDeletingWebhook={isDeletingWebhook}
         />
       )}
     </div>
