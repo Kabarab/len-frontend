@@ -1,29 +1,31 @@
 import { Handle, Position } from 'reactflow';
 import './TelegramNode.css';
 
-function TelegramNode({ data }) {
+// Принимаем новую функцию onAddNode через data
+function TelegramNode({ id, data }) {
+  const onPlusClick = (event) => {
+    event.stopPropagation(); // Останавливаем всплытие события
+    data.onAddNode(id);
+  };
+
   return (
-    <div className="telegram-node">
-      <Handle type="target" position={Position.Top} />
+    <div className="telegram-node custom-node">
+      <Handle type="target" position={Position.Top} className="custom-handle" />
 
       <div className="node-header">
-        {/* ИЗМЕНЕНИЕ: Заменяем SVG на тег img */}
-        <img 
-          src="/icons/telegram.png" 
-          alt="Telegram" 
-          className="node-icon" 
-          width="24" 
-          height="24" 
-        />
+        <img src="/icons/telegram.png" alt="Telegram" className="node-icon" width="24" height="24" />
         <div className="node-title">Telegram</div>
       </div>
 
       <div className="node-body">
-        <label htmlFor="text">Сообщение:</label>
-        <textarea id="text" name="text" rows="3" defaultValue={data.message || 'Привет, мир!'}></textarea>
+        <label htmlFor={`text-${id}`}>Сообщение:</label>
+        <textarea id={`text-${id}`} name="text" rows="3" defaultValue={data.message || 'Привет, мир!'} className="nodrag"></textarea>
       </div>
 
-      <Handle type="source" position={Position.Bottom} />
+      <Handle type="source" position={Position.Bottom} className="custom-handle" />
+
+      {/* Наша новая кнопка "+" */}
+      <div className="add-node-button" onClick={onPlusClick}>+</div>
     </div>
   );
 }

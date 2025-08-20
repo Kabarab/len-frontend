@@ -1,0 +1,38 @@
+/* Общие стили для всех кастомных узлов */
+.custom-node {
+    position: relative; /* Необходимо для позиционирования кнопки */
+}
+
+.add-node-button {
+    position: absolute;
+    bottom: -15px; /* Располагаем под узлом */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 24px;
+    height: 24px;
+    background-color: #ffffff;
+    border: 1px solid #007bff;
+    color: #007bff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    opacity: 0; /* Скрыта по умолчанию */
+    transition: opacity 0.2s;
+    z-index: 10;
+}
+
+/* Показываем кнопку при наведении на узел */
+.custom-node:hover .add-node-button {
+    opacity: 1;
+}
+
+/* Увеличиваем "ручки" для соединения */
+.custom-handle {
+    width: 10px !important;
+    height: 10px !important;
+    background-color: #555 !important;
+}

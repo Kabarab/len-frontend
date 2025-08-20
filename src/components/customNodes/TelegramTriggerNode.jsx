@@ -1,9 +1,14 @@
 import { Handle, Position } from 'reactflow';
 import './TelegramTriggerNode.css';
 
-function TelegramTriggerNode({ data }) {
+function TelegramTriggerNode({ id, data }) {
+  const onPlusClick = (event) => {
+    event.stopPropagation();
+    data.onAddNode(id);
+  };
+
   return (
-    <div className="telegram-trigger-node">
+    <div className="telegram-trigger-node custom-node">
       <div className="node-header">
         <img src="/icons/telegram.png" alt="Telegram" className="node-icon" width="24" height="24" />
         <div className="node-title">Триггер Telegram</div>
@@ -11,8 +16,10 @@ function TelegramTriggerNode({ data }) {
       <div className="node-body">
         Получает новые сообщения
       </div>
-      {/* У этого узла есть только выход (source), но нет входа (target) */}
-      <Handle type="source" position={Position.Bottom} />
+      <Handle type="source" position={Position.Bottom} className="custom-handle" />
+
+      {/* Наша новая кнопка "+" */}
+      <div className="add-node-button" onClick={onPlusClick}>+</div>
     </div>
   );
 }

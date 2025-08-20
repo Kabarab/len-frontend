@@ -28,6 +28,37 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
   const [isSettingWebhook, setIsSettingWebhook] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  const handleAddNode = useCallback((sourceNodeId) => {
+    const sourceNode = nodes.find(n => n.id === sourceNodeId);
+    if (!sourceNode) return;
+
+    const newNodePosition = {
+      x: sourceNode.position.x,
+      y: sourceNode.position.y + 120,
+    };
+
+    const newNode = {
+      id: getId(),
+      type: 'default',
+      position: newNodePosition,
+      data: { label: 'Новый узел' },
+    };
+
+    const newEdge = {
+      id: `e${sourceNodeId}-${newNode.id}`,
+      source: sourceNodeId,
+      target: newNode.id,
+    };
+
+    setNodes((nds) => nds.concat(newNode));
+    setEdges((eds) => eds.concat(newEdge));
+  }, [nodes]);
+
+  const nodesWithCallbacks = nodes.map(node => ({
+    ...node,
+    data: { ...node.data, onAddNode: handleAddNode },
+  }));
+
   useEffect(() => {
     getAuthHeaders().then(headers => {
         fetch(`${import.meta.env.VITE_API_URL}/api/workflows/${workflowId}`, { headers })
@@ -68,10 +99,14 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
 
   const handleSave = async () => {
     const headers = await getAuthHeaders();
+    const nodesToSave = nodes.map(({ data, ...rest }) => {
+        const { onAddNode, ...restData } = data;
+        return { ...rest, data: restData };
+    });
     fetch(`${import.meta.env.VITE_API_URL}/api/workflows/${workflowId}`, {
       method: 'PUT',
       headers,
-      body: JSON.stringify({ nodes, edges }),
+      body: JSON.stringify({ nodes: nodesToSave, edges }),
     })
     .then(res => res.json())
     .then(data => alert('Процесс сохранен!'))
@@ -161,11 +196,8 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
     });
   }, []);
 
-  // --- НОВАЯ ФУНКЦИЯ ДЛЯ МОБИЛЬНЫХ КЛИКОВ ---
   const onNodeClick = useCallback((event, node) => {
-    // Проверяем, является ли устройство мобильным (по ширине экрана)
     if (window.innerWidth < 768) {
-      // Вызываем ту же логику, что и при правом клике
       onNodeContextMenu(event, node);
     }
   }, [onNodeContextMenu]);
@@ -213,13 +245,11 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
 
   return (
     <div className="editor-layout">
-      <button className="mobile-sidebar-toggle" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
-        ☰
-      </button>
+      <button className="mobile-sidebar-toggle" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>☰</button>
       <Sidebar onNodeClick={handleNodeClickFromSidebar} className={isSidebarOpen ? 'open' : ''} />
       <div className="workflow-editor-container" ref={reactFlowWrapper}>
         <ReactFlow
-          nodes={nodes}
+          nodes={nodesWithCallbacks}
           edges={edges}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
@@ -229,7 +259,7 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
           onDragOver={onDragOver}
           nodeTypes={nodeTypes}
           onNodeContextMenu={onNodeContextMenu}
-          onNodeClick={onNodeClick} // Подключаем новый обработчик
+          onNodeClick={onNodeClick}
           onPaneContextMenu={onPaneContextMenu}
           onPaneClick={onPaneClick}
           onMoveStart={onPaneClick}
