@@ -26,7 +26,7 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
   const [settingsNode, setSettingsNode] = useState(null);
   const [isFetchingChatId, setIsFetchingChatId] = useState(false);
   const [isSettingWebhook, setIsSettingWebhook] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Состояние для мобильного меню
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     getAuthHeaders().then(headers => {
@@ -161,6 +161,15 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
     });
   }, []);
 
+  // --- НОВАЯ ФУНКЦИЯ ДЛЯ МОБИЛЬНЫХ КЛИКОВ ---
+  const onNodeClick = useCallback((event, node) => {
+    // Проверяем, является ли устройство мобильным (по ширине экрана)
+    if (window.innerWidth < 768) {
+      // Вызываем ту же логику, что и при правом клике
+      onNodeContextMenu(event, node);
+    }
+  }, [onNodeContextMenu]);
+
   const onPaneContextMenu = useCallback((event) => {
     event.preventDefault();
     const pane = reactFlowWrapper.current.getBoundingClientRect();
@@ -220,6 +229,7 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
           onDragOver={onDragOver}
           nodeTypes={nodeTypes}
           onNodeContextMenu={onNodeContextMenu}
+          onNodeClick={onNodeClick} // Подключаем новый обработчик
           onPaneContextMenu={onPaneContextMenu}
           onPaneClick={onPaneClick}
           onMoveStart={onPaneClick}

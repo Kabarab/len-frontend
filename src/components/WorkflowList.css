@@ -15,6 +15,7 @@
   align-items: center;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
   transition: box-shadow 0.2s ease-in-out;
+  cursor: pointer;
 }
 
 .workflow-item:hover {
@@ -23,6 +24,7 @@
 
 .workflow-name {
   font-weight: bold;
+  color: #333; /* ИСПРАВЛЕНИЕ: Добавляем явный цвет текста */
 }
 
 .workflow-status {
@@ -54,7 +56,7 @@
   padding: 4px 10px;
   border-radius: 5px;
   cursor: pointer;
-  margin-left: 16px; /* Отступ от статуса */
+  margin-left: 16px;
   font-size: 0.8em;
   transition: background-color 0.2s;
 }
@@ -62,8 +64,3 @@
 .delete-button:hover {
   background-color: #c82333;
 }
-.workflow-item {
-    /* ... существующие стили ... */
-    cursor: pointer; /* Показываем, что на элемент можно нажать */
-}
-

@@ -4,29 +4,7 @@
   border-right: 1px solid #ddd;
   background-color: #f7f7f7;
 }
-.sidebar-header {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 20px;
-}
-.sidebar-node {
-  padding: 10px 15px;
-  margin-bottom: 10px;
-  border: 2px solid #1a192b;
-  border-radius: 5px;
-  background: white;
-  cursor: grab;
-  text-align: center;
-}
-.sidebar-node.input {
-  border-color: #0041d0;
-}
-.sidebar-node.output {
-  border-color: #ff0072;
-}
-.sidebar-node.telegram {
-  border-color: #29b6f6;
-}
+
 .sidebar-header {
   font-size: 14px;
   font-weight: bold;
@@ -35,10 +13,35 @@
   color: #555;
   text-transform: uppercase;
 }
+
 .sidebar-header:first-child {
   margin-top: 0;
 }
+
+.sidebar-node {
+  padding: 10px 15px;
+  margin-bottom: 10px;
+  border: 2px solid #1a192b;
+  border-radius: 5px;
+  background: white;
+  cursor: grab;
+  text-align: center;
+  color: #333; /* ИСПРАВЛЕНИЕ: Добавляем явный цвет текста */
+}
+
+.sidebar-node.input {
+  border-color: #0041d0;
+}
+
+.sidebar-node.output {
+  border-color: #ff0072;
+}
+
 .sidebar-node.trigger {
   border-style: dashed;
+  border-color: #29b6f6;
+}
+
+.sidebar-node.telegram {
   border-color: #29b6f6;
 }
