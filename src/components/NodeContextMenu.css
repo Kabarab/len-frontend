@@ -7,6 +7,15 @@
   box-shadow: 2px 2px 5px rgba(0,0,0,0.15);
   display: flex;
   flex-direction: column;
+  padding: 5px 0;
+}
+
+.context-menu-header {
+  padding: 8px 15px;
+  font-weight: bold;
+  color: #777;
+  font-size: 12px;
+  text-transform: uppercase;
 }
 
 .context-menu button {

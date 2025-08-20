@@ -11,7 +11,7 @@ import OutputNode from './customNodes/OutputNode';
 import NodeContextMenu from './NodeContextMenu';
 import PaneContextMenu from './PaneContextMenu';
 import SettingsPanel from './SettingsPanel';
-import AddNodeMenu from './AddNodeMenu'; // Импортируем новое меню
+import AddNodeMenu from './AddNodeMenu';
 import './WorkflowEditor.css';
 
 const nodeTypes = {
@@ -30,7 +30,7 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
   const [edges, setEdges] = useState([]);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
   const [menu, setMenu] = useState(null);
-  const [addNodeMenu, setAddNodeMenu] = useState(null); // Состояние для нового меню
+  const [addNodeMenu, setAddNodeMenu] = useState(null);
   const [settingsNode, setSettingsNode] = useState(null);
   const [isFetchingChatId, setIsFetchingChatId] = useState(false);
   const [isSettingWebhook, setIsSettingWebhook] = useState(false);
@@ -47,37 +47,20 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
 
   const handleAddNodeFromMenu = useCallback((nodeType) => {
     if (!addNodeMenu) return;
-
     const { sourceNodeId } = addNodeMenu;
     const sourceNode = nodes.find(n => n.id === sourceNodeId);
     if (!sourceNode) return;
 
-    const newNodePosition = {
-      x: sourceNode.position.x,
-      y: sourceNode.position.y + 120,
-    };
-
+    const newNodePosition = { x: sourceNode.position.x, y: sourceNode.position.y + 120 };
     let data = { label: `${nodeType} узел` };
-    if (nodeType === 'telegram') {
-        data = { message: 'Новое сообщение' };
-    }
+    if (nodeType === 'telegram') { data = { message: 'Новое сообщение' }; }
 
-    const newNode = {
-      id: getId(),
-      type: nodeType,
-      position: newNodePosition,
-      data,
-    };
-
-    const newEdge = {
-      id: `e${sourceNodeId}-${newNode.id}`,
-      source: sourceNodeId,
-      target: newNode.id,
-    };
+    const newNode = { id: getId(), type: nodeType, position: newNodePosition, data };
+    const newEdge = { id: `e${sourceNodeId}-${newNode.id}`, source: sourceNodeId, target: newNode.id };
 
     setNodes((nds) => nds.concat(newNode));
     setEdges((eds) => eds.concat(newEdge));
-    setAddNodeMenu(null); // Закрываем меню
+    setAddNodeMenu(null);
   }, [addNodeMenu, nodes]);
 
   const nodesWithCallbacks = nodes.map(node => ({
@@ -253,12 +236,35 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
       }
     } else if (action === 'deleteNode' && menu.type === 'node') {
       setNodes((nds) => nds.filter((node) => node.id !== menu.id));
-    } else if (action === 'addTelegramNode' && menu.type === 'pane') {
-      const position = reactFlowInstance.screenToFlowPosition({ x: menu.left, y: menu.top });
-      createNewNode('telegram', position, { message: 'Новое сообщение' });
-    } else if (action === 'addDefaultNode' && menu.type === 'pane') {
-      const position = reactFlowInstance.screenToFlowPosition({ x: menu.left, y: menu.top });
-      createNewNode('default', position, { label: 'Новый узел' });
+    } else if (menu.type === 'pane') {
+        const position = reactFlowInstance.screenToFlowPosition({ x: menu.left, y: menu.top });
+        let nodeType = '';
+        let data = {};
+        switch(action) {
+            case 'addTelegramTriggerNode':
+                nodeType = 'telegramTrigger';
+                data = { label: 'Триггер Telegram' };
+                break;
+            case 'addTelegramNode':
+                nodeType = 'telegram';
+                data = { message: 'Новое сообщение' };
+                break;
+            case 'addInputNode':
+                nodeType = 'input';
+                data = { label: 'Узел входа' };
+                break;
+            case 'addDefaultNode':
+                nodeType = 'default';
+                data = { label: 'Новый узел' };
+                break;
+            case 'addOutputNode':
+                nodeType = 'output';
+                data = { label: 'Узел выхода' };
+                break;
+            default:
+                return;
+        }
+        createNewNode(nodeType, position, data);
     }
     setMenu(null);
   }, [menu, nodes, reactFlowInstance]);
