@@ -37,7 +37,7 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
     setAddNodeMenu({
         sourceNodeId,
         top: event.clientY - pane.top,
-        left: event.clientX - pane.left,
+        left: event.clientX - pane.top,
     });
   }, []);
   
