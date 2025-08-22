@@ -10,10 +10,17 @@ import PaneContextMenu from './PaneContextMenu';
 import SettingsPanel from './SettingsPanel';
 import './WorkflowEditor.css';
 
+import TelegramNode from './customNodes/TelegramNode';
+import TelegramTriggerNode from './customNodes/TelegramTriggerNode';
+import HttpRequestNode from './customNodes/HttpRequestNode'; // <-- Добавляем импорт
+
+
 const nodeTypes = {
   telegram: TelegramNode,
   telegramTrigger: TelegramTriggerNode,
+  httpRequest: HttpRequestNode, // <-- Регистрируем новый тип
 };
+
 let id = 0;
 const getId = () => `dndnode_${id++}`;
 
