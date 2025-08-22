@@ -26,15 +26,7 @@
   background: white;
   cursor: grab;
   text-align: center;
-  color: #333; /* ИСПРАВЛЕНИЕ: Добавляем явный цвет текста */
-}
-
-.sidebar-node.input {
-  border-color: #0041d0;
-}
-
-.sidebar-node.output {
-  border-color: #ff0072;
+  color: #333;
 }
 
 .sidebar-node.trigger {
@@ -48,4 +40,9 @@
 
 .sidebar-node.http {
   border-color: #2e7d32;
+}
+
+/* --- НОВЫЙ СТИЛЬ --- */
+.sidebar-node.huggingface {
+  border-color: #FFD21E;
 }

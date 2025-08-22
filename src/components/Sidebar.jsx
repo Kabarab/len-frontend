@@ -33,41 +33,25 @@ function Sidebar({ onNodeClick, className }) { // Принимаем className
         Узел Telegram
       </div>
 
-      {/* --- НОВЫЙ УЗЕЛ --- */}
       <div
-        className="sidebar-node http" // Добавим стиль для него
+        className="sidebar-node http"
         onClick={() => onNodeClick('httpRequest', { method: 'GET', url: 'https://api.example.com/data' })}
         onDragStart={(event) => onDragStart(event, 'httpRequest', { method: 'GET', url: 'https://api.example.com/data' })}
         draggable
       >
         HTTP Запрос
       </div>
-      {/* --- КОНЕЦ НОВОГО УЗЛА --- */}
 
-      <div 
-        className="sidebar-node input" 
-        onClick={() => onNodeClick('input', { label: 'Узел входа' })}
-        onDragStart={(event) => onDragStart(event, 'input')} 
+      {/* --- НОВЫЙ УЗЕЛ --- */}
+      <div
+        className="sidebar-node huggingface" // Добавим стиль для него
+        onClick={() => onNodeClick('huggingFace', { modelUrl: 'gpt2', prompt: 'Hello' })}
+        onDragStart={(event) => onDragStart(event, 'huggingFace', { modelUrl: 'gpt2', prompt: 'Hello' })}
         draggable
       >
-        Узел входа (Триггер)
+        Hugging Face
       </div>
-      <div 
-        className="sidebar-node" 
-        onClick={() => onNodeClick('default', { label: 'Стандартный узел' })}
-        onDragStart={(event) => onDragStart(event, 'default')} 
-        draggable
-      >
-        Стандартный узел
-      </div>
-      <div 
-        className="sidebar-node output" 
-        onClick={() => onNodeClick('output', { label: 'Узел выхода' })}
-        onDragStart={(event) => onDragStart(event, 'output')} 
-        draggable
-      >
-        Узел выхода
-      </div>
+      {/* --- КОНЕЦ НОВОГО УЗЛА --- */}
     </aside>
   );
 }

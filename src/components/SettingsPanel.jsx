@@ -16,24 +16,32 @@ function SettingsPanel({
   const [chatId, setChatId] = useState(node.data.chatId || '');
   const [message, setMessage] = useState(node.data.message || '');
 
-  // --- НОВЫЕ СОСТОЯНИЯ ДЛЯ HTTP-УЗЛА ---
   const [url, setUrl] = useState(node.data.url || '');
   const [method, setMethod] = useState(node.data.method || 'GET');
   const [headers, setHeaders] = useState(node.data.headers || '{}');
   const [body, setBody] = useState(node.data.body || '{}');
   const [jsonError, setJsonError] = useState('');
+  
+  // --- НОВЫЕ СОСТОЯНИЯ ДЛЯ HUGGING FACE ---
+  const [hfToken, setHfToken] = useState(node.data.hfToken || '');
+  const [modelUrl, setModelUrl] = useState(node.data.modelUrl || '');
+  const [prompt, setPrompt] = useState(node.data.prompt || '');
+
 
   useEffect(() => {
     setBotToken(node.data.botToken || '');
     setChatId(node.data.chatId || '');
     setMessage(node.data.message || '');
     
-    // Обновляем состояния для HTTP-узла при смене узла
     setUrl(node.data.url || '');
     setMethod(node.data.method || 'GET');
-    // Убедимся, что headers и body всегда строки в редакторе
     setHeaders(typeof node.data.headers === 'object' ? JSON.stringify(node.data.headers, null, 2) : node.data.headers || '{}');
     setBody(typeof node.data.body === 'object' ? JSON.stringify(node.data.body, null, 2) : node.data.body || '{}');
+
+    // --- ОБНОВЛЕНИЕ СОСТОЯНИЙ HUGGING FACE ---
+    setHfToken(node.data.hfToken || '');
+    setModelUrl(node.data.modelUrl || '');
+    setPrompt(node.data.prompt || '');
 
   }, [node.id, node.data]);
 
@@ -69,6 +77,12 @@ function SettingsPanel({
     }
     onSave(node.id, { url, method, headers, body });
   };
+
+  // --- НОВАЯ ФУНКЦИЯ СОХРАНЕНИЯ ДЛЯ HUGGING FACE ---
+  const handleHuggingFaceNodeSave = () => {
+    onSave(node.id, { hfToken, modelUrl, prompt });
+  };
+
 
   if (node.type === 'telegramTrigger') {
     return (
@@ -106,7 +120,6 @@ function SettingsPanel({
     );
   }
   
-  // --- НОВЫЙ БЛОК: JSX ДЛЯ HTTP-УЗЛА ---
   if (node.type === 'httpRequest') {
     return (
         <aside className="settings-panel">
@@ -147,9 +160,31 @@ function SettingsPanel({
         </aside>
     );
   }
-  // --- КОНЕЦ НОВОГО БЛОКА ---
+  
+  if (node.type === 'huggingFace') {
+    return (
+      <aside className="settings-panel">
+        <div className="settings-header">Настройки Hugging Face</div>
+        <div className="settings-body">
+          <label>API Токен:</label>
+          <input type="password" value={hfToken} onChange={(e) => setHfToken(e.target.value)} />
+          <small>Ваш токен доступа с сайта Hugging Face.</small>
 
-  // Рендер панели для узла Telegram (как и было)
+          <label>URL Модели:</label>
+          <input type="text" value={modelUrl} onChange={(e) => setModelUrl(e.target.value)} />
+          <small>Например: https://api-inference.huggingface.co/models/gpt2</small>
+
+          <label>Запрос (Prompt):</label>
+          <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} rows="6"></textarea>
+          {/* --- ИСПРАВЛЕНИЕ ЗДЕСЬ --- */}
+          <small>Текст, который вы отправляете в модель. Можно использовать плейсхолдеры, например `{'{{trigger.message.text}}'}`</small>
+        </div>
+        <button className="save-settings-button" onClick={handleHuggingFaceNodeSave}>Применить настройки</button>
+      </aside>
+    );
+  }
+
+  // Рендер панели для узла Telegram
   return (
     <aside className="settings-panel">
       <div className="settings-header">Настройки узла: {node.data.label || 'Telegram'}</div>

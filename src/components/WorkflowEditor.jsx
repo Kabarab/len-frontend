@@ -6,6 +6,7 @@ import Sidebar from './Sidebar';
 import TelegramNode from './customNodes/TelegramNode';
 import TelegramTriggerNode from './customNodes/TelegramTriggerNode';
 import HttpRequestNode from './customNodes/HttpRequestNode';
+import HuggingFaceNode from './customNodes/HuggingFaceNode'; // --- ИМПОРТ ---
 import NodeContextMenu from './NodeContextMenu';
 import PaneContextMenu from './PaneContextMenu';
 import SettingsPanel from './SettingsPanel';
@@ -13,13 +14,13 @@ import AddNodeMenu from './AddNodeMenu';
 import './WorkflowEditor.css';
 
 // --- ИЗМЕНЕНИЕ ---
-// Жестко прописываем URL бэкенда
 const API_URL = 'https://lenom.onrender.com';
 
 const nodeTypes = {
   telegram: TelegramNode,
   telegramTrigger: TelegramTriggerNode,
   httpRequest: HttpRequestNode,
+  huggingFace: HuggingFaceNode, // --- РЕГИСТРАЦИЯ ---
 };
 let id = 0;
 const getId = () => `dndnode_${id++}`;
@@ -53,7 +54,7 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
 
   useEffect(() => {
     getAuthHeaders().then(headers => {
-        fetch(`${API_URL}/api/workflows/${workflowId}`, { headers }) // Используем API_URL
+        fetch(`${API_URL}/api/workflows/${workflowId}`, { headers })
         .then(res => res.json())
         .then(data => {
             if (data.nodes) setNodes(data.nodes);
@@ -83,18 +84,26 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
 
     const sourceNode = nodes.find(n => n.id === addNodeMenu.sourceNodeId);
     if (!sourceNode) return;
-
-    // Position the new node below the source node
+    
     const position = {
         x: sourceNode.position.x,
-        y: sourceNode.position.y + 150 // 150px below
+        y: sourceNode.position.y + 150
     };
+    
+    let defaultData = {};
+    if (nodeType === 'httpRequest') {
+        defaultData = { method: 'GET', url: 'https://api.example.com/data' };
+    } else if (nodeType === 'telegram') {
+        defaultData = { message: 'Новое сообщение' };
+    } else if (nodeType === 'huggingFace') {
+        defaultData = { modelUrl: 'gpt2', prompt: 'Hello world' };
+    }
 
     const newNode = {
         id: getId(),
         type: nodeType,
         position,
-        data: { label: `${nodeType} узел` }
+        data: defaultData
     };
 
     const newEdge = {
@@ -111,7 +120,7 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
 
   const handleSave = async () => {
     const headers = await getAuthHeaders();
-    fetch(`${API_URL}/api/workflows/${workflowId}`, { // Используем API_URL
+    fetch(`${API_URL}/api/workflows/${workflowId}`, {
       method: 'PUT',
       headers,
       body: JSON.stringify({ nodes, edges }),
@@ -123,7 +132,7 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
 
   const handleRun = async () => {
     const headers = await getAuthHeaders();
-    fetch(`${API_URL}/api/workflows/${workflowId}/run`, { // Используем API_URL
+    fetch(`${API_URL}/api/workflows/${workflowId}/run`, {
       method: 'POST',
       headers,
     })
@@ -154,7 +163,7 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
     }
     setIsFetchingChatId(true);
     try {
-        const response = await fetch(`${API_URL}/api/telegram/get-chat-id`, { // Используем API_URL
+        const response = await fetch(`${API_URL}/api/telegram/get-chat-id`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ token: botToken }),
@@ -175,7 +184,7 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
   const handleSetWebhook = async (botToken) => {
     setIsSettingWebhook(true);
     try {
-        const response = await fetch(`${API_URL}/api/telegram/set-webhook`, { // Используем API_URL
+        const response = await fetch(`${API_URL}/api/telegram/set-webhook`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ token: botToken, workflowId: workflowId }),
@@ -195,7 +204,7 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
   const handleDeleteWebhook = async (botToken) => {
     setIsDeletingWebhook(true);
     try {
-        const response = await fetch(`${API_URL}/api/telegram/delete-webhook`, { // Используем API_URL
+        const response = await fetch(`${API_URL}/api/telegram/delete-webhook`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ token: botToken }),
@@ -240,24 +249,32 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
     const newNode = { id: getId(), type, position, data };
     setNodes((nds) => nds.concat(newNode));
   };
-
+  
   const handleMenuAction = useCallback((action) => {
-    if (action === 'openSettings' && menu.type === 'node') {
-      const nodeToEdit = nodes.find(n => n.id === menu.id);
-      if (nodeToEdit) {
-        setSettingsNode(nodeToEdit);
-      }
-    } else if (action === 'deleteNode' && menu.type === 'node') {
-      setNodes((nds) => nds.filter((node) => node.id !== menu.id));
-    } else if (action === 'addTelegramNode' && menu.type === 'pane') {
-      const position = reactFlowInstance.screenToFlowPosition({ x: menu.left, y: menu.top });
-      createNewNode('telegram', position, { message: '{{trigger.message.text}}' });
-    } else if (action === 'addDefaultNode' && menu.type === 'pane') {
-      const position = reactFlowInstance.screenToFlowPosition({ x: menu.left, y: menu.top });
-      createNewNode('default', position, { label: 'Новый узел' });
+    if (!menu) return;
+
+    if (menu.type === 'node') {
+        if (action === 'openSettings') {
+            const nodeToEdit = nodes.find(n => n.id === menu.id);
+            if (nodeToEdit) setSettingsNode(nodeToEdit);
+        } else if (action === 'deleteNode') {
+            setNodes((nds) => nds.filter((node) => node.id !== menu.id));
+        }
+    } else if (menu.type === 'pane') {
+        const position = reactFlowInstance.screenToFlowPosition({ x: menu.left, y: menu.top });
+        if (action === 'addTelegramTriggerNode') {
+            createNewNode('telegramTrigger', position, { label: 'Триггер Telegram' });
+        } else if (action === 'addTelegramNode') {
+            createNewNode('telegram', position, { message: '{{trigger.message.text}}' });
+        } else if (action === 'addHttpRequestNode') {
+            createNewNode('httpRequest', position, { method: 'GET', url: 'https://api.example.com' });
+        } else if (action === 'addHuggingFaceNode') { // --- ДОБАВЛЕНО ---
+            createNewNode('huggingFace', position, { modelUrl: 'gpt2', prompt: '' });
+        }
     }
     setMenu(null);
   }, [menu, nodes, reactFlowInstance]);
+
 
   const defaultEdgeOptions = {
     animated: true,
