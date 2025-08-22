@@ -33,6 +33,17 @@ function Sidebar({ onNodeClick, className }) { // Принимаем className
         Узел Telegram
       </div>
 
+      {/* --- НОВЫЙ УЗЕЛ --- */}
+      <div
+        className="sidebar-node http" // Добавим стиль для него
+        onClick={() => onNodeClick('httpRequest', { method: 'GET', url: 'https://api.example.com/data' })}
+        onDragStart={(event) => onDragStart(event, 'httpRequest', { method: 'GET', url: 'https://api.example.com/data' })}
+        draggable
+      >
+        HTTP Запрос
+      </div>
+      {/* --- КОНЕЦ НОВОГО УЗЛА --- */}
+
       <div 
         className="sidebar-node input" 
         onClick={() => onNodeClick('input', { label: 'Узел входа' })}

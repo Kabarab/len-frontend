@@ -5,15 +5,11 @@ import 'reactflow/dist/style.css';
 import Sidebar from './Sidebar';
 import TelegramNode from './customNodes/TelegramNode';
 import TelegramTriggerNode from './customNodes/TelegramTriggerNode';
+import HttpRequestNode from './customNodes/HttpRequestNode'; // <-- Добавляем импорт
 import NodeContextMenu from './NodeContextMenu';
 import PaneContextMenu from './PaneContextMenu';
 import SettingsPanel from './SettingsPanel';
 import './WorkflowEditor.css';
-
-import TelegramNode from './customNodes/TelegramNode';
-import TelegramTriggerNode from './customNodes/TelegramTriggerNode';
-import HttpRequestNode from './customNodes/HttpRequestNode'; // <-- Добавляем импорт
-
 
 const nodeTypes = {
   telegram: TelegramNode,

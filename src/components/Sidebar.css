@@ -45,3 +45,7 @@
 .sidebar-node.telegram {
   border-color: #29b6f6;
 }
+
+.sidebar-node.http {
+  border-color: #2e7d32;
+}
