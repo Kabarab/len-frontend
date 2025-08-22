@@ -6,6 +6,10 @@ import AddWorkflowForm from './components/AddWorkflowForm';
 import WorkflowEditor from './components/WorkflowEditor';
 import LoginPage from './components/LoginPage';
 
+// --- ИЗМЕНЕНИЕ ---
+// Жестко прописываем URL бэкенда
+const API_URL = 'https://lenom.onrender.com';
+
 function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -31,7 +35,7 @@ function App() {
   useEffect(() => {
     if (user) {
       getAuthHeaders().then(headers => {
-        fetch(`${import.meta.env.VITE_API_URL}/api/workflows`, { headers })
+        fetch(`${API_URL}/api/workflows`, { headers }) // Используем API_URL
           .then(response => {
             if (!response.ok) { throw new Error('Ошибка сети или сервера'); }
             return response.json();
@@ -46,7 +50,7 @@ function App() {
 
   const handleAddWorkflow = async (newWorkflowData) => {
     const headers = await getAuthHeaders();
-    fetch(`${import.meta.env.VITE_API_URL}/api/workflows`, {
+    fetch(`${API_URL}/api/workflows`, { // Используем API_URL
       method: 'POST',
       headers,
       body: JSON.stringify(newWorkflowData),
@@ -59,7 +63,7 @@ function App() {
 
   const handleDeleteWorkflow = async (idToDelete) => {
     const headers = await getAuthHeaders();
-    fetch(`${import.meta.env.VITE_API_URL}/api/workflows/${idToDelete}`, {
+    fetch(`${API_URL}/api/workflows/${idToDelete}`, { // Используем API_URL
       method: 'DELETE',
       headers,
     })
