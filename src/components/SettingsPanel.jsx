@@ -22,7 +22,6 @@ function SettingsPanel({
   const [body, setBody] = useState(node.data.body || '{}');
   const [jsonError, setJsonError] = useState('');
   
-  // --- НОВЫЕ СОСТОЯНИЯ ДЛЯ HUGGING FACE ---
   const [hfToken, setHfToken] = useState(node.data.hfToken || '');
   const [modelUrl, setModelUrl] = useState(node.data.modelUrl || '');
   const [prompt, setPrompt] = useState(node.data.prompt || '');
@@ -38,7 +37,6 @@ function SettingsPanel({
     setHeaders(typeof node.data.headers === 'object' ? JSON.stringify(node.data.headers, null, 2) : node.data.headers || '{}');
     setBody(typeof node.data.body === 'object' ? JSON.stringify(node.data.body, null, 2) : node.data.body || '{}');
 
-    // --- ОБНОВЛЕНИЕ СОСТОЯНИЙ HUGGING FACE ---
     setHfToken(node.data.hfToken || '');
     setModelUrl(node.data.modelUrl || '');
     setPrompt(node.data.prompt || '');
@@ -78,12 +76,14 @@ function SettingsPanel({
     onSave(node.id, { url, method, headers, body });
   };
 
-  // --- НОВАЯ ФУНКЦИЯ СОХРАНЕНИЯ ДЛЯ HUGGING FACE ---
   const handleHuggingFaceNodeSave = () => {
     onSave(node.id, { hfToken, modelUrl, prompt });
   };
 
 
+  // --- ИСПРАВЛЕНИЕ ЛОГИКИ РЕНДЕРИНГА ---
+  // Преобразуем отдельные if в цепочку if-else if
+  
   if (node.type === 'telegramTrigger') {
     return (
       <aside className="settings-panel">
@@ -118,9 +118,7 @@ function SettingsPanel({
         </div>
       </aside>
     );
-  }
-  
-  if (node.type === 'httpRequest') {
+  } else if (node.type === 'httpRequest') {
     return (
         <aside className="settings-panel">
             <div className="settings-header">Настройки HTTP-запроса</div>
@@ -136,7 +134,7 @@ function SettingsPanel({
 
                 <label>URL:</label>
                 <input type="text" value={url} onChange={(e) => setUrl(e.target.value)} />
-                <small>Можно использовать плейсхолдеры, например: `https://.../users/`{'{{trigger.message.chat.id}}'}`</small>
+                <small>Можно использовать плейсхолдеры, например: `https://.../users/{'{{trigger.message.chat.id}}'}`</small>
 
                 <label>Заголовки (JSON):</label>
                 <textarea 
@@ -159,9 +157,7 @@ function SettingsPanel({
             <button className="save-settings-button" onClick={handleHttpNodeSave}>Применить настройки</button>
         </aside>
     );
-  }
-  
-  if (node.type === 'huggingFace') {
+  } else if (node.type === 'huggingFace') {
     return (
       <aside className="settings-panel">
         <div className="settings-header">Настройки Hugging Face</div>
@@ -176,38 +172,36 @@ function SettingsPanel({
 
           <label>Запрос (Prompt):</label>
           <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} rows="6"></textarea>
-          {/* --- ИСПРАВЛЕНИЕ ЗДЕСЬ --- */}
           <small>Текст, который вы отправляете в модель. Можно использовать плейсхолдеры, например `{'{{trigger.message.text}}'}`</small>
         </div>
         <button className="save-settings-button" onClick={handleHuggingFaceNodeSave}>Применить настройки</button>
       </aside>
     );
-  }
+  } else { // Используем else для отображения стандартной панели Telegram
+    return (
+      <aside className="settings-panel">
+        <div className="settings-header">Настройки узла: {node.data.label || 'Telegram'}</div>
+        <div className="settings-body">
+          <label>Токен Бота:</label>
+          <input type="text" value={botToken} onChange={(e) => setBotToken(e.target.value)} />
 
-  // Рендер панели для узла Telegram
-  return (
-    <aside className="settings-panel">
-      <div className="settings-header">Настройки узла: {node.data.label || 'Telegram'}</div>
-      <div className="settings-body">
-        <label>Токен Бота:</label>
-        <input type="text" value={botToken} onChange={(e) => setBotToken(e.target.value)} />
+          <label>ID Чата:</label>
+          <div className="chat-id-wrapper">
+              <input type="text" value={chatId} onChange={(e) => setChatId(e.target.value)} />
+              <button onClick={handleGetChatId} disabled={isFetchingChatId || !botToken}>
+                  {isFetchingChatId ? '...' : 'Получить'}
+              </button>
+          </div>
+          <small>Чтобы получить ID, отправьте любое сообщение вашему боту и нажмите "Получить".</small>
 
-        <label>ID Чата:</label>
-        <div className="chat-id-wrapper">
-            <input type="text" value={chatId} onChange={(e) => setChatId(e.target.value)} />
-            <button onClick={handleGetChatId} disabled={isFetchingChatId || !botToken}>
-                {isFetchingChatId ? '...' : 'Получить'}
-            </button>
+          <label>Сообщение:</label>
+          <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows="4"></textarea>
+          <small>Используйте `{'{{trigger.message.text}}'}` чтобы вставить текст из триггера, и `{'{{trigger.message.chat.id}}'}` для ID чата.</small>
         </div>
-        <small>Чтобы получить ID, отправьте любое сообщение вашему боту и нажмите "Получить".</small>
-
-        <label>Сообщение:</label>
-        <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows="4"></textarea>
-        <small>Используйте `{'{{trigger.message.text}}'}` чтобы вставить текст из триггера, и `{'{{trigger.message.chat.id}}'}` для ID чата.</small>
-      </div>
-      <button className="save-settings-button" onClick={handleActionNodeSave}>Применить настройки</button>
-    </aside>
-  );
+        <button className="save-settings-button" onClick={handleActionNodeSave}>Применить настройки</button>
+      </aside>
+    );
+  }
 }
 
 export default SettingsPanel;
