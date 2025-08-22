@@ -85,12 +85,19 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
         x: sourceNode.position.x,
         y: sourceNode.position.y + 150 // 150px below
     };
+    
+    let defaultData = { label: `${nodeType} узел` };
+    if (nodeType === 'httpRequest') {
+        defaultData = { method: 'GET', url: 'https://api.example.com/data' };
+    } else if (nodeType === 'telegram') {
+        defaultData = { message: 'Новое сообщение' };
+    }
 
     const newNode = {
         id: getId(),
         type: nodeType,
         position,
-        data: { label: `${nodeType} узел` }
+        data: defaultData
     };
 
     const newEdge = {
@@ -236,24 +243,30 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
     const newNode = { id: getId(), type, position, data };
     setNodes((nds) => nds.concat(newNode));
   };
-
+  
   const handleMenuAction = useCallback((action) => {
-    if (action === 'openSettings' && menu.type === 'node') {
-      const nodeToEdit = nodes.find(n => n.id === menu.id);
-      if (nodeToEdit) {
-        setSettingsNode(nodeToEdit);
-      }
-    } else if (action === 'deleteNode' && menu.type === 'node') {
-      setNodes((nds) => nds.filter((node) => node.id !== menu.id));
-    } else if (action === 'addTelegramNode' && menu.type === 'pane') {
-      const position = reactFlowInstance.screenToFlowPosition({ x: menu.left, y: menu.top });
-      createNewNode('telegram', position, { message: '{{trigger.message.text}}' });
-    } else if (action === 'addDefaultNode' && menu.type === 'pane') {
-      const position = reactFlowInstance.screenToFlowPosition({ x: menu.left, y: menu.top });
-      createNewNode('default', position, { label: 'Новый узел' });
+    if (!menu) return;
+
+    if (menu.type === 'node') {
+        if (action === 'openSettings') {
+            const nodeToEdit = nodes.find(n => n.id === menu.id);
+            if (nodeToEdit) setSettingsNode(nodeToEdit);
+        } else if (action === 'deleteNode') {
+            setNodes((nds) => nds.filter((node) => node.id !== menu.id));
+        }
+    } else if (menu.type === 'pane') {
+        const position = reactFlowInstance.screenToFlowPosition({ x: menu.left, y: menu.top });
+        if (action === 'addTelegramTriggerNode') {
+            createNewNode('telegramTrigger', position, { label: 'Триггер Telegram' });
+        } else if (action === 'addTelegramNode') {
+            createNewNode('telegram', position, { message: '{{trigger.message.text}}' });
+        } else if (action === 'addHttpRequestNode') {
+            createNewNode('httpRequest', position, { method: 'GET', url: 'https://api.example.com' });
+        }
     }
     setMenu(null);
   }, [menu, nodes, reactFlowInstance]);
+
 
   const defaultEdgeOptions = {
     animated: true,
