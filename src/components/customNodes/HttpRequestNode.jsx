@@ -1,9 +1,13 @@
 import { Handle, Position } from 'reactflow';
-import './HttpRequestNode.css'; // Создадим его следующим шагом
+import './HttpRequestNode.css';
 
 function HttpRequestNode({ id, data }) {
-  // Получаем метод из данных, по умолчанию GET
   const method = data.method || 'GET';
+
+  const onPlusClick = (event) => {
+    event.stopPropagation();
+    data.onAddNode(id, event);
+  };
 
   return (
     <div className="http-request-node custom-node">
@@ -15,12 +19,12 @@ function HttpRequestNode({ id, data }) {
       </div>
       
       <div className="node-body">
-        {/* Отображаем метод и URL, если они есть */}
         <div className="http-method">{method}</div>
         <div className="http-url" title={data.url}>{data.url || 'URL не задан'}</div>
       </div>
 
       <Handle type="source" position={Position.Bottom} className="custom-handle" />
+      <div className="add-node-button" onClick={onPlusClick}>+</div>
     </div>
   );
 }

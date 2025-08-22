@@ -5,18 +5,18 @@ import 'reactflow/dist/style.css';
 import Sidebar from './Sidebar';
 import TelegramNode from './customNodes/TelegramNode';
 import TelegramTriggerNode from './customNodes/TelegramTriggerNode';
-import HttpRequestNode from './customNodes/HttpRequestNode'; // <-- Добавляем импорт
+import HttpRequestNode from './customNodes/HttpRequestNode';
 import NodeContextMenu from './NodeContextMenu';
 import PaneContextMenu from './PaneContextMenu';
 import SettingsPanel from './SettingsPanel';
+import AddNodeMenu from './AddNodeMenu';
 import './WorkflowEditor.css';
 
 const nodeTypes = {
   telegram: TelegramNode,
   telegramTrigger: TelegramTriggerNode,
-  httpRequest: HttpRequestNode, // <-- Регистрируем новый тип
+  httpRequest: HttpRequestNode,
 };
-
 let id = 0;
 const getId = () => `dndnode_${id++}`;
 
@@ -30,6 +30,22 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
   const [isFetchingChatId, setIsFetchingChatId] = useState(false);
   const [isSettingWebhook, setIsSettingWebhook] = useState(false);
   const [isDeletingWebhook, setIsDeletingWebhook] = useState(false);
+  const [addNodeMenu, setAddNodeMenu] = useState(null);
+
+  const onAddNode = useCallback((sourceNodeId, event) => {
+    const pane = reactFlowWrapper.current.getBoundingClientRect();
+    setAddNodeMenu({
+        sourceNodeId,
+        top: event.clientY - pane.top,
+        left: event.clientX - pane.left,
+    });
+  }, []);
+  
+  const nodesWithOnAddNode = nodes.map(n => ({
+      ...n,
+      data: { ...n.data, onAddNode: onAddNode }
+  }));
+
 
   useEffect(() => {
     getAuthHeaders().then(headers => {
@@ -57,6 +73,37 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
     const newNode = { id: getId(), type, position, data };
     setNodes((nds) => nds.concat(newNode));
   }, [reactFlowInstance]);
+  
+  const handleAddNodeSelect = (nodeType) => {
+    if (!addNodeMenu) return;
+
+    const sourceNode = nodes.find(n => n.id === addNodeMenu.sourceNodeId);
+    if (!sourceNode) return;
+
+    // Position the new node below the source node
+    const position = {
+        x: sourceNode.position.x,
+        y: sourceNode.position.y + 150 // 150px below
+    };
+
+    const newNode = {
+        id: getId(),
+        type: nodeType,
+        position,
+        data: { label: `${nodeType} узел` }
+    };
+
+    const newEdge = {
+        id: `e${sourceNode.id}-${newNode.id}`,
+        source: sourceNode.id,
+        target: newNode.id,
+    };
+
+    setNodes((nds) => nds.concat(newNode));
+    setEdges((eds) => addEdge(newEdge, eds));
+    setAddNodeMenu(null);
+  };
+
 
   const handleSave = async () => {
     const headers = await getAuthHeaders();
@@ -183,7 +230,7 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
     });
   }, []);
 
-  const onPaneClick = useCallback(() => { setMenu(null); setSettingsNode(null); }, []);
+  const onPaneClick = useCallback(() => { setMenu(null); setSettingsNode(null); setAddNodeMenu(null); }, []);
 
   const createNewNode = (type, position, data) => {
     const newNode = { id: getId(), type, position, data };
@@ -219,7 +266,7 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
       <Sidebar />
       <div className="workflow-editor-container" ref={reactFlowWrapper}>
         <ReactFlow
-          nodes={nodes}
+          nodes={nodesWithOnAddNode}
           edges={edges}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
@@ -240,6 +287,7 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
           <Background />
           <Controls />
         </ReactFlow>
+        {addNodeMenu && <AddNodeMenu top={addNodeMenu.top} left={addNodeMenu.left} onSelectNode={handleAddNodeSelect} />}
         {menu?.type === 'node' && <NodeContextMenu {...menu} onAction={handleMenuAction} />}
         {menu?.type === 'pane' && <PaneContextMenu {...menu} onAction={handleMenuAction} />}
         <div className="editor-controls">
