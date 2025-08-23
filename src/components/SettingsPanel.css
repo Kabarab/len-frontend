@@ -115,7 +115,7 @@
   font-weight: bold;
 }
 
-/* --- НОВЫЕ СТИЛИ ДЛЯ ПОДСКАЗКИ --- */
+/* --- СТИЛИ ДЛЯ ПОДСКАЗКИ (С ИСПРАВЛЕНИЕМ) --- */
 .label-with-tooltip {
   display: flex;
   align-items: center;
@@ -151,7 +151,8 @@
   padding: 10px;
   position: absolute;
   z-index: 1;
-  bottom: 125%; /* Позиционируем над иконкой */
+  /* --- ИЗМЕНЕНИЕ --- */
+  top: 150%; /* Позиционируем под иконкой */
   left: 50%;
   margin-left: -125px; /* Центрируем */
   opacity: 0;
@@ -163,12 +164,14 @@
 .tooltip-text::after {
   content: "";
   position: absolute;
-  top: 100%;
+  /* --- ИЗМЕНЕНИЕ --- */
+  bottom: 100%;  /* Стрелка теперь сверху */
   left: 50%;
   margin-left: -5px;
   border-width: 5px;
   border-style: solid;
-  border-color: #333 transparent transparent transparent;
+  /* --- ИЗМЕНЕНИЕ --- */
+  border-color: transparent transparent #333 transparent; /* Стрелка указывает вверх */
 }
 
 .tooltip-container:hover .tooltip-text {
