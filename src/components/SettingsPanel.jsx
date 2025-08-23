@@ -177,7 +177,7 @@ function SettingsPanel({
         <button className="save-settings-button" onClick={handleHuggingFaceNodeSave}>Применить настройки</button>
       </aside>
     );
-  } else if (node.type === 'telegram') { // Явно указываем тип для узла Telegram
+  } else if (node.type === 'telegram') {
     return (
       <aside className="settings-panel">
         <div className="settings-header">Настройки узла: {node.data.label || 'Telegram'}</div>
@@ -203,7 +203,7 @@ function SettingsPanel({
     );
   }
   
-  // Возвращаем null или пустой div, если узел не имеет настроек
+  // Если узел не имеет настроек (например, старые default/input/output), ничего не отображаем
   return null; 
 }
 
