@@ -189,7 +189,19 @@ const HuggingFaceSettings = ({ node, onSave }) => {
                 <input type="password" value={hfToken} onChange={(e) => setHfToken(e.target.value)} />
                 <small>Ваш токен доступа с сайта Hugging Face.</small>
                 
-                <label>URL Модели:</label>
+                {/* --- НОВЫЙ БЛОК С ПОДСКАЗКОЙ --- */}
+                <div className="label-with-tooltip">
+                  <label>URL Модели:</label>
+                  <div className="tooltip-container">
+                    <div className="tooltip-icon">i</div>
+                    <span className="tooltip-text">
+                      1. Найдите нужную модель на huggingface.co<br/>
+                      2. На странице модели нажмите Deploy → Inference API.<br/>
+                      3. Скопируйте URL из примера для cURL.<br/>
+                      Например: https://api-inference.huggingface.co/models/gpt2
+                    </span>
+                  </div>
+                </div>
                 <input type="text" value={modelUrl} onChange={(e) => setModelUrl(e.target.value)} />
                 <small>Например: https://api-inference.huggingface.co/models/gpt2</small>
                 
