@@ -1,0 +1,59 @@
+.ai-assistant-setup {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 24px;
+  margin-top: 20px;
+  text-align: left;
+}
+
+.ai-assistant-setup h2 {
+  margin-top: 0;
+  color: #333;
+}
+
+.ai-assistant-setup p {
+  color: #555;
+  font-size: 0.9em;
+}
+
+.setup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.setup-form label {
+  font-weight: bold;
+  font-size: 0.9em;
+  color: #444;
+}
+
+.setup-form input,
+.setup-form select {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 1em;
+}
+
+.setup-form button {
+  padding: 12px 20px;
+  border: none;
+  background-color: #28a745;
+  color: white;
+  border-radius: 8px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  align-self: flex-start; /* Кнопка не растягивается на всю ширину */
+}
+
+.setup-form button:hover {
+  background-color: #218838;
+}
+
+.setup-form button:disabled {
+  background-color: #a0a0a0;
+  cursor: not-allowed;
+}
