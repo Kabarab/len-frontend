@@ -6,21 +6,22 @@ import Sidebar from './Sidebar';
 import TelegramNode from './customNodes/TelegramNode';
 import TelegramTriggerNode from './customNodes/TelegramTriggerNode';
 import HttpRequestNode from './customNodes/HttpRequestNode';
-import HuggingFaceNode from './customNodes/HuggingFaceNode'; // --- ИМПОРТ ---
+import HuggingFaceNode from './customNodes/HuggingFaceNode';
+import ChatGPTNode from './customNodes/ChatGPTNode'; // --- ИМПОРТ ---
 import NodeContextMenu from './NodeContextMenu';
 import PaneContextMenu from './PaneContextMenu';
 import SettingsPanel from './SettingsPanel';
 import AddNodeMenu from './AddNodeMenu';
 import './WorkflowEditor.css';
 
-// --- ИЗМЕНЕНИЕ ---
 const API_URL = 'https://lenom.onrender.com';
 
 const nodeTypes = {
   telegram: TelegramNode,
   telegramTrigger: TelegramTriggerNode,
   httpRequest: HttpRequestNode,
-  huggingFace: HuggingFaceNode, // --- РЕГИСТРАЦИЯ ---
+  huggingFace: HuggingFaceNode,
+  chatGPT: ChatGPTNode, // --- РЕГИСТРАЦИЯ ---
 };
 let id = 0;
 const getId = () => `dndnode_${id++}`;
@@ -97,7 +98,10 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
         defaultData = { message: 'Новое сообщение' };
     } else if (nodeType === 'huggingFace') {
         defaultData = { modelUrl: 'gpt2', prompt: 'Hello world' };
+    } else if (nodeType === 'chatGPT') {
+        defaultData = { model: 'gpt-3.5-turbo', prompt: 'Hello world' };
     }
+
 
     const newNode = {
         id: getId(),
@@ -268,8 +272,10 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
             createNewNode('telegram', position, { message: '{{trigger.message.text}}' });
         } else if (action === 'addHttpRequestNode') {
             createNewNode('httpRequest', position, { method: 'GET', url: 'https://api.example.com' });
-        } else if (action === 'addHuggingFaceNode') { // --- ДОБАВЛЕНО ---
+        } else if (action === 'addHuggingFaceNode') {
             createNewNode('huggingFace', position, { modelUrl: 'gpt2', prompt: '' });
+        } else if (action === 'addChatGPTNode') { // --- ДОБАВЛЕНО ---
+            createNewNode('chatGPT', position, { model: 'gpt-3.5-turbo', prompt: '' });
         }
     }
     setMenu(null);

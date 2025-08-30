@@ -214,6 +214,45 @@ const HuggingFaceSettings = ({ node, onSave }) => {
     );
 };
 
+// --- НОВЫЙ КОМПОНЕНТ ДЛЯ НАСТРОЕК УЗЛА CHATGPT ---
+const ChatGPTNodeSettings = ({ node, onSave }) => {
+    const [apiKey, setApiKey] = useState(node.data.apiKey || '');
+    const [model, setModel] = useState(node.data.model || 'gpt-3.5-turbo');
+    const [prompt, setPrompt] = useState(node.data.prompt || '');
+
+    useEffect(() => {
+        setApiKey(node.data.apiKey || '');
+        setModel(node.data.model || 'gpt-3.5-turbo');
+        setPrompt(node.data.prompt || '');
+    }, [node.data]);
+
+    const handleSave = () => {
+        onSave(node.id, { apiKey, model, prompt });
+    };
+
+    return (
+        <div className="chatgpt-settings">
+            <div className="settings-header">Настройки ChatGPT</div>
+            <div className="settings-content">
+                <label>API Ключ (OpenAI):</label>
+                <input type="password" value={apiKey} onChange={(e) => setApiKey(e.target.value)} />
+                <small>Ваш API ключ от OpenAI.</small>
+
+                <label>Модель:</label>
+                <select value={model} onChange={(e) => setModel(e.target.value)}>
+                    <option value="gpt-4">GPT-4</option>
+                    <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                </select>
+
+                <label>Запрос (Prompt):</label>
+                <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} rows="6"></textarea>
+                <small>Можно использовать плейсхолдеры, например `{'{{trigger.message.text}}'}`</small>
+            </div>
+            <button className="save-button" onClick={handleSave}>Применить настройки</button>
+        </div>
+    );
+};
+
 
 // --- ГЛАВНЫЙ КОМПОНЕНТ-ПЕРЕКЛЮЧАТЕЛЬ ---
 function SettingsPanel(props) {
@@ -233,6 +272,8 @@ function SettingsPanel(props) {
                 return <HttpRequestSettings {...props} />;
             case 'huggingFace':
                 return <HuggingFaceSettings {...props} />;
+            case 'chatGPT': // --- ДОБАВЛЕНО ---
+                return <ChatGPTNodeSettings {...props} />;
             default:
                 return null;
         }

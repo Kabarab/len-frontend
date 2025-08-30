@@ -6,8 +6,9 @@ function AddNodeMenu({ top, left, onSelectNode }) {
       <div className="add-node-menu-header">Выберите узел</div>
       <button onClick={() => onSelectNode('telegram')}>Узел Telegram</button>
       <button onClick={() => onSelectNode('httpRequest')}>HTTP Запрос</button>
-      {/* --- ДОБАВЛЕНО --- */}
       <button onClick={() => onSelectNode('huggingFace')}>Hugging Face</button>
+      {/* --- ДОБАВЛЕНО --- */}
+      <button onClick={() => onSelectNode('chatGPT')}>ChatGPT</button>
     </div>
   );
 }

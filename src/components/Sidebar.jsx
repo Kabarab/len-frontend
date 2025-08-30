@@ -52,6 +52,17 @@ function Sidebar({ onNodeClick, className }) { // Принимаем className
         Hugging Face
       </div>
       {/* --- КОНЕЦ НОВОГО УЗЛА --- */}
+      
+      {/* --- НОВЫЙ УЗЕЛ CHATGPT --- */}
+      <div
+        className="sidebar-node chatgpt" // Добавим стиль для него
+        onClick={() => onNodeClick('chatGPT', { model: 'gpt-3.5-turbo', prompt: 'Hello' })}
+        onDragStart={(event) => onDragStart(event, 'chatGPT', { model: 'gpt-3.5-turbo', prompt: 'Hello' })}
+        draggable
+      >
+        ChatGPT
+      </div>
+      {/* --- КОНЕЦ НОВОГО УЗЛА --- */}
     </aside>
   );
 }

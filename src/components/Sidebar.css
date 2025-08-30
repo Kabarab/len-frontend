@@ -46,3 +46,8 @@
 .sidebar-node.huggingface {
   border-color: #FFD21E;
 }
+
+/* --- НОВЫЙ СТИЛЬ --- */
+.sidebar-node.chatgpt {
+  border-color: #74AA9C;
+}

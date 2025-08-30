@@ -7,8 +7,9 @@ function PaneContextMenu({ top, left, onAction }) {
       <button onClick={() => onAction('addTelegramTriggerNode')}>Триггер Telegram</button>
       <button onClick={() => onAction('addTelegramNode')}>Узел Telegram</button>
       <button onClick={() => onAction('addHttpRequestNode')}>Узел HTTP Запроса</button>
-      {/* --- ДОБАВЛЕНО --- */}
       <button onClick={() => onAction('addHuggingFaceNode')}>Узел Hugging Face</button>
+      {/* --- ДОБАВЛЕНО --- */}
+      <button onClick={() => onAction('addChatGPTNode')}>Узел ChatGPT</button>
     </div>
   );
 }
