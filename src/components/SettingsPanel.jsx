@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import './SettingsPanel.css';
 
-// --- Компонент для настроек ТРИГГЕРА TELEGRAM ---
+// ... (код для TelegramTriggerSettings, TelegramNodeSettings, HttpRequestSettings, HuggingFaceSettings, ChatGPTNodeSettings остается без изменений) ...
 const TelegramTriggerSettings = ({ node, onSave, onSetWebhook, isSettingWebhook, onDeleteWebhook, isDeletingWebhook }) => {
   const [botToken, setBotToken] = useState(node.data.botToken || '');
 
@@ -27,14 +27,14 @@ const TelegramTriggerSettings = ({ node, onSave, onSetWebhook, isSettingWebhook,
         <label>2. Управление Вебхуком:</label>
         <p>Активируйте триггер, чтобы начать получать сообщения.</p>
         <div className="button-group">
-          <button 
-            className="activate-button" 
+          <button
+            className="activate-button"
             onClick={() => onSetWebhook(botToken)}
             disabled={isSettingWebhook || !botToken}
           >
             {isSettingWebhook ? '...' : 'Активировать'}
           </button>
-          <button 
+          <button
             className="deactivate-button"
             onClick={() => onDeleteWebhook(botToken)}
             disabled={isDeletingWebhook || !botToken}
@@ -48,7 +48,6 @@ const TelegramTriggerSettings = ({ node, onSave, onSetWebhook, isSettingWebhook,
   );
 };
 
-// --- Компонент для настроек УЗЛА TELEGRAM ---
 const TelegramNodeSettings = ({ node, onSave, onGetChatId, isFetchingChatId }) => {
     const [botToken, setBotToken] = useState(node.data.botToken || '');
     const [chatId, setChatId] = useState(node.data.chatId || '');
@@ -89,14 +88,13 @@ const TelegramNodeSettings = ({ node, onSave, onGetChatId, isFetchingChatId }) =
 
                 <label>Сообщение:</label>
                 <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows="4"></textarea>
-                <small>Используйте `{'{{trigger.message.text}}'}` или `{'{{node_id.result.alternatives[0].message.text}}'}` для вставки данных.</small>
+                <small>Используйте `{'{{trigger.message.text}}'}` или `{'{{ID_УЗЛА.result.alternatives[0].message.text}}'}`</small>
             </div>
              <button className="save-button" onClick={handleSave}>Применить настройки</button>
         </div>
     );
 };
 
-// --- Компонент для настроек УЗЛА HTTP ---
 const HttpRequestSettings = ({ node, onSave }) => {
     const [url, setUrl] = useState(node.data.url || '');
     const [method, setMethod] = useState(node.data.method || 'GET');
@@ -154,7 +152,6 @@ const HttpRequestSettings = ({ node, onSave }) => {
     );
 };
 
-// --- Компонент для настроек УЗЛА HUGGING FACE ---
 const HuggingFaceSettings = ({ node, onSave }) => {
     const [hfToken, setHfToken] = useState(node.data.hfToken || '');
     const [modelUrl, setModelUrl] = useState(node.data.modelUrl || '');
@@ -213,7 +210,6 @@ const HuggingFaceSettings = ({ node, onSave }) => {
     );
 };
 
-// --- Компонент для настроек УЗЛА CHATGPT ---
 const ChatGPTNodeSettings = ({ node, onSave }) => {
     const [apiKey, setApiKey] = useState(node.data.apiKey || '');
     const [model, setModel] = useState(node.data.model || 'gpt-3.5-turbo');
@@ -252,7 +248,6 @@ const ChatGPTNodeSettings = ({ node, onSave }) => {
     );
 };
 
-// --- Компонент для настроек УЗЛА YANDEXGPT ---
 const YandexGPTNodeSettings = ({ node, onSave }) => {
     const [apiKey, setApiKey] = useState(node.data.apiKey || '');
     const [folderId, setFolderId] = useState(node.data.folderId || '');
@@ -290,7 +285,7 @@ const YandexGPTNodeSettings = ({ node, onSave }) => {
 
                 <label>Запрос (Prompt):</label>
                 <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} rows="6"></textarea>
-                <small>Можно использовать плейсхолдеры, например `{'{{trigger.message.text}}'}`</small>
+                <small>Используйте `{'{{trigger.message.text}}'}` для вставки текста из триггера.</small>
             </div>
             <button className="save-button" onClick={handleSave}>Применить настройки</button>
         </div>

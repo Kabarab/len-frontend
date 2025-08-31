@@ -57,9 +57,10 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+/* --- ИЗМЕНЕНИЯ ЗДЕСЬ --- */
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
+    color: #213547; /* Устанавливаем цвет текста по умолчанию */
     background-color: #ffffff;
   }
 
@@ -91,6 +92,7 @@ body,
 
 .app-container {
   padding: 20px;
+  color: #333; /* Дополнительно устанавливаем цвет для контейнера */
 }
 
 .app-header {
@@ -122,7 +124,6 @@ html, body, #root {
   font-family: sans-serif;
   box-sizing: border-box;
   background-color: #fdfdfd;
-  color: #333; /* Глобальный цвет текста */
 }
 
 *, *:before, *:after {
@@ -162,4 +163,4 @@ html, body, #root {
   .app-container {
     padding: 15px;
   }
-} 
+}

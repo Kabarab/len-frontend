@@ -1,6 +1,6 @@
 import './Sidebar.css';
 
-function Sidebar({ onNodeClick, className }) { // Принимаем className
+function Sidebar({ onNodeClick, className }) {
   const onDragStart = (event, nodeType, defaultData) => {
     event.dataTransfer.setData('application/reactflow', nodeType);
     if (defaultData) {
@@ -10,7 +10,6 @@ function Sidebar({ onNodeClick, className }) { // Принимаем className
   };
 
   return (
-    // Добавляем className для управления видимостью
     <aside className={`sidebar ${className}`}>
       <div className="sidebar-header">Триггеры</div>
       <div
@@ -60,10 +59,11 @@ function Sidebar({ onNodeClick, className }) { // Принимаем className
         ChatGPT
       </div>
       
+      {/* --- ИСПРАВЛЕННЫЙ БЛОК YANDEXGPT --- */}
       <div
-        className="sidebar-node yandexgpt"
-        onClick={() => onNodeClick('yandexgpt', { model: 'yandexgpt-lite', prompt: 'Hello' })}
-        onDragStart={(event) => onDragStart(event, 'yandexgpt', { model: 'yandexgpt-lite', prompt: 'Hello' })}
+        className="sidebar-node yandexgpt" 
+        onClick={() => onNodeClick('yandexgpt', { model: 'yandexgpt-lite', prompt: '{{trigger.message.text}}' })}
+        onDragStart={(event) => onDragStart(event, 'yandexgpt', { model: 'yandexgpt-lite', prompt: '{{trigger.message.text}}' })}
         draggable
       >
         YandexGPT
