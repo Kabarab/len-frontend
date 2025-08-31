@@ -42,27 +42,32 @@ function Sidebar({ onNodeClick, className }) { // Принимаем className
         HTTP Запрос
       </div>
 
-      {/* --- НОВЫЙ УЗЕЛ --- */}
       <div
-        className="sidebar-node huggingface" // Добавим стиль для него
+        className="sidebar-node huggingface"
         onClick={() => onNodeClick('huggingFace', { modelUrl: 'gpt2', prompt: 'Hello' })}
         onDragStart={(event) => onDragStart(event, 'huggingFace', { modelUrl: 'gpt2', prompt: 'Hello' })}
         draggable
       >
         Hugging Face
       </div>
-      {/* --- КОНЕЦ НОВОГО УЗЛА --- */}
       
-      {/* --- НОВЫЙ УЗЕЛ CHATGPT --- */}
       <div
-        className="sidebar-node chatgpt" // Добавим стиль для него
+        className="sidebar-node chatgpt"
         onClick={() => onNodeClick('chatGPT', { model: 'gpt-3.5-turbo', prompt: 'Hello' })}
         onDragStart={(event) => onDragStart(event, 'chatGPT', { model: 'gpt-3.5-turbo', prompt: 'Hello' })}
         draggable
       >
         ChatGPT
       </div>
-      {/* --- КОНЕЦ НОВОГО УЗЛА --- */}
+      
+      <div
+        className="sidebar-node yandexgpt"
+        onClick={() => onNodeClick('yandexgpt', { model: 'yandexgpt-lite', prompt: 'Hello' })}
+        onDragStart={(event) => onDragStart(event, 'yandexgpt', { model: 'yandexgpt-lite', prompt: 'Hello' })}
+        draggable
+      >
+        YandexGPT
+      </div>
     </aside>
   );
 }

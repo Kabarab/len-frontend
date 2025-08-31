@@ -89,7 +89,7 @@ const TelegramNodeSettings = ({ node, onSave, onGetChatId, isFetchingChatId }) =
 
                 <label>Сообщение:</label>
                 <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows="4"></textarea>
-                <small>Используйте `{'{{trigger.message.text}}'}` для вставки текста из триггера.</small>
+                <small>Используйте `{'{{trigger.message.text}}'}` или `{'{{node_id.result.alternatives[0].message.text}}'}` для вставки данных.</small>
             </div>
              <button className="save-button" onClick={handleSave}>Применить настройки</button>
         </div>
@@ -189,7 +189,6 @@ const HuggingFaceSettings = ({ node, onSave }) => {
                 <input type="password" value={hfToken} onChange={(e) => setHfToken(e.target.value)} />
                 <small>Ваш токен доступа с сайта Hugging Face.</small>
                 
-                {/* --- НОВЫЙ БЛОК С ПОДСКАЗКОЙ --- */}
                 <div className="label-with-tooltip">
                   <label>URL Модели:</label>
                   <div className="tooltip-container">
@@ -214,7 +213,7 @@ const HuggingFaceSettings = ({ node, onSave }) => {
     );
 };
 
-// --- НОВЫЙ КОМПОНЕНТ ДЛЯ НАСТРОЕК УЗЛА CHATGPT ---
+// --- Компонент для настроек УЗЛА CHATGPT ---
 const ChatGPTNodeSettings = ({ node, onSave }) => {
     const [apiKey, setApiKey] = useState(node.data.apiKey || '');
     const [model, setModel] = useState(node.data.model || 'gpt-3.5-turbo');
@@ -253,7 +252,7 @@ const ChatGPTNodeSettings = ({ node, onSave }) => {
     );
 };
 
-// --- НОВЫЙ КОМПОНЕНТ ДЛЯ НАСТРОЕК УЗЛА YANDEXGPT ---
+// --- Компонент для настроек УЗЛА YANDEXGPT ---
 const YandexGPTNodeSettings = ({ node, onSave }) => {
     const [apiKey, setApiKey] = useState(node.data.apiKey || '');
     const [folderId, setFolderId] = useState(node.data.folderId || '');
@@ -319,7 +318,7 @@ function SettingsPanel(props) {
                 return <HuggingFaceSettings {...props} />;
             case 'chatGPT':
                 return <ChatGPTNodeSettings {...props} />;
-            case 'yandexgpt': // --- ДОБАВЛЕНО YANDEX ---
+            case 'yandexgpt':
                 return <YandexGPTNodeSettings {...props} />;
             default:
                 return null;

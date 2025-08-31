@@ -42,17 +42,14 @@
   border-color: #2e7d32;
 }
 
-/* --- НОВЫЙ СТИЛЬ --- */
 .sidebar-node.huggingface {
   border-color: #FFD21E;
 }
 
-/* --- НОВЫЙ СТИЛЬ --- */
 .sidebar-node.chatgpt {
   border-color: #74AA9C;
 }
 
-/* --- НОВЫЙ СТИЛЬ YANDEX --- */
 .sidebar-node.yandexgpt {
-  border-color: #FF0000;
+  border-color: #FF0000; /* Yandex color */
 }
