@@ -1,0 +1,43 @@
+@import './commonNodeStyles.css';
+
+.yandexgpt-node {
+  border: 1px solid #FF0000; /* Yandex color */
+  border-radius: 8px;
+  background: white;
+  width: 220px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  color: #333;
+}
+
+.yandexgpt-node .node-header {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  background-color: #fceeee;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.yandexgpt-node .node-icon {
+  margin-right: 8px;
+}
+
+.yandexgpt-node .node-title {
+  font-weight: bold;
+}
+
+.yandexgpt-node .node-body {
+  padding: 10px;
+  font-family: monospace;
+  font-size: 12px;
+}
+
+.yandexgpt-node .node-model-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #555;
+  background-color: #f7f7f7;
+  padding: 4px 8px;
+  border-radius: 4px;
+}

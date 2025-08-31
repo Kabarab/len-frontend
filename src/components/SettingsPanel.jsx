@@ -253,6 +253,51 @@ const ChatGPTNodeSettings = ({ node, onSave }) => {
     );
 };
 
+// --- НОВЫЙ КОМПОНЕНТ ДЛЯ НАСТРОЕК УЗЛА YANDEXGPT ---
+const YandexGPTNodeSettings = ({ node, onSave }) => {
+    const [apiKey, setApiKey] = useState(node.data.apiKey || '');
+    const [folderId, setFolderId] = useState(node.data.folderId || '');
+    const [model, setModel] = useState(node.data.model || 'yandexgpt-lite');
+    const [prompt, setPrompt] = useState(node.data.prompt || '');
+
+    useEffect(() => {
+        setApiKey(node.data.apiKey || '');
+        setFolderId(node.data.folderId || '');
+        setModel(node.data.model || 'yandexgpt-lite');
+        setPrompt(node.data.prompt || '');
+    }, [node.data]);
+
+    const handleSave = () => {
+        onSave(node.id, { apiKey, folderId, model, prompt });
+    };
+
+    return (
+        <div className="yandexgpt-settings">
+            <div className="settings-header">Настройки YandexGPT</div>
+            <div className="settings-content">
+                <label>API Ключ (Yandex):</label>
+                <input type="password" value={apiKey} onChange={(e) => setApiKey(e.target.value)} />
+                <small>Ваш API ключ от Yandex Cloud.</small>
+                
+                <label>Folder ID (Yandex):</label>
+                <input type="text" value={folderId} onChange={(e) => setFolderId(e.target.value)} />
+                <small>Ваш Folder ID от Yandex Cloud.</small>
+
+                <label>Модель:</label>
+                <select value={model} onChange={(e) => setModel(e.target.value)}>
+                    <option value="yandexgpt">YandexGPT</option>
+                    <option value="yandexgpt-lite">YandexGPT Lite</option>
+                </select>
+
+                <label>Запрос (Prompt):</label>
+                <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} rows="6"></textarea>
+                <small>Можно использовать плейсхолдеры, например `{'{{trigger.message.text}}'}`</small>
+            </div>
+            <button className="save-button" onClick={handleSave}>Применить настройки</button>
+        </div>
+    );
+};
+
 
 // --- ГЛАВНЫЙ КОМПОНЕНТ-ПЕРЕКЛЮЧАТЕЛЬ ---
 function SettingsPanel(props) {
@@ -272,8 +317,10 @@ function SettingsPanel(props) {
                 return <HttpRequestSettings {...props} />;
             case 'huggingFace':
                 return <HuggingFaceSettings {...props} />;
-            case 'chatGPT': // --- ДОБАВЛЕНО ---
+            case 'chatGPT':
                 return <ChatGPTNodeSettings {...props} />;
+            case 'yandexgpt': // --- ДОБАВЛЕНО YANDEX ---
+                return <YandexGPTNodeSettings {...props} />;
             default:
                 return null;
         }

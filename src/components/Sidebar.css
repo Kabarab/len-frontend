@@ -51,3 +51,8 @@
 .sidebar-node.chatgpt {
   border-color: #74AA9C;
 }
+
+/* --- НОВЫЙ СТИЛЬ YANDEX --- */
+.sidebar-node.yandexgpt {
+  border-color: #FF0000;
+}

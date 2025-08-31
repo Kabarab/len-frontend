@@ -7,7 +7,8 @@ import TelegramNode from './customNodes/TelegramNode';
 import TelegramTriggerNode from './customNodes/TelegramTriggerNode';
 import HttpRequestNode from './customNodes/HttpRequestNode';
 import HuggingFaceNode from './customNodes/HuggingFaceNode';
-import ChatGPTNode from './customNodes/ChatGPTNode'; // --- ИМПОРТ ---
+import ChatGPTNode from './customNodes/ChatGPTNode';
+import YandexGPTNode from './customNodes/YandexGPTNode'; // --- ИМПОРТ YANDEX ---
 import NodeContextMenu from './NodeContextMenu';
 import PaneContextMenu from './PaneContextMenu';
 import SettingsPanel from './SettingsPanel';
@@ -21,7 +22,8 @@ const nodeTypes = {
   telegramTrigger: TelegramTriggerNode,
   httpRequest: HttpRequestNode,
   huggingFace: HuggingFaceNode,
-  chatGPT: ChatGPTNode, // --- РЕГИСТРАЦИЯ ---
+  chatGPT: ChatGPTNode,
+  yandexgpt: YandexGPTNode, // --- РЕГИСТРАЦИЯ YANDEX ---
 };
 let id = 0;
 const getId = () => `dndnode_${id++}`;
@@ -100,6 +102,8 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
         defaultData = { modelUrl: 'gpt2', prompt: 'Hello world' };
     } else if (nodeType === 'chatGPT') {
         defaultData = { model: 'gpt-3.5-turbo', prompt: 'Hello world' };
+    } else if (nodeType === 'yandexgpt') { // --- ДОБАВЛЕНО YANDEX ---
+        defaultData = { model: 'yandexgpt-lite', prompt: 'Hello world' };
     }
 
 
@@ -274,8 +278,10 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
             createNewNode('httpRequest', position, { method: 'GET', url: 'https://api.example.com' });
         } else if (action === 'addHuggingFaceNode') {
             createNewNode('huggingFace', position, { modelUrl: 'gpt2', prompt: '' });
-        } else if (action === 'addChatGPTNode') { // --- ДОБАВЛЕНО ---
+        } else if (action === 'addChatGPTNode') {
             createNewNode('chatGPT', position, { model: 'gpt-3.5-turbo', prompt: '' });
+        } else if (action === 'addYandexGPTNode') { // --- ДОБАВЛЕНО YANDEX ---
+            createNewNode('yandexgpt', position, { model: 'yandexgpt-lite', prompt: '' });
         }
     }
     setMenu(null);
