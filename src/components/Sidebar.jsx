@@ -25,8 +25,8 @@ function Sidebar({ onNodeClick, className }) {
 
       <div
         className="sidebar-node telegram"
-        onClick={() => onNodeClick('telegram', { message: 'Новое сообщение' })}
-        onDragStart={(event) => onDragStart(event, 'telegram', { message: 'Новое сообщение' })}
+        onClick={() => onNodeClick('telegram', { message: '' })}
+        onDragStart={(event) => onDragStart(event, 'telegram', { message: '' })}
         draggable
       >
         Узел Telegram
@@ -43,8 +43,8 @@ function Sidebar({ onNodeClick, className }) {
 
       <div
         className="sidebar-node huggingface"
-        onClick={() => onNodeClick('huggingFace', { modelUrl: 'gpt2', prompt: 'Hello' })}
-        onDragStart={(event) => onDragStart(event, 'huggingFace', { modelUrl: 'gpt2', prompt: 'Hello' })}
+        onClick={() => onNodeClick('huggingFace', { modelUrl: 'gpt2', prompt: '' })}
+        onDragStart={(event) => onDragStart(event, 'huggingFace', { modelUrl: 'gpt2', prompt: '' })}
         draggable
       >
         Hugging Face
@@ -52,8 +52,8 @@ function Sidebar({ onNodeClick, className }) {
       
       <div
         className="sidebar-node chatgpt"
-        onClick={() => onNodeClick('chatGPT', { model: 'gpt-3.5-turbo', prompt: 'Hello' })}
-        onDragStart={(event) => onDragStart(event, 'chatGPT', { model: 'gpt-3.5-turbo', prompt: 'Hello' })}
+        onClick={() => onNodeClick('chatGPT', { model: 'gpt-3.5-turbo', prompt: '' })}
+        onDragStart={(event) => onDragStart(event, 'chatGPT', { model: 'gpt-3.5-turbo', prompt: '' })}
         draggable
       >
         ChatGPT
@@ -62,8 +62,8 @@ function Sidebar({ onNodeClick, className }) {
       {/* --- ИСПРАВЛЕННЫЙ БЛОК YANDEXGPT --- */}
       <div
         className="sidebar-node yandexgpt" 
-        onClick={() => onNodeClick('yandexgpt', { model: 'yandexgpt-lite', prompt: '{{trigger.message.text}}' })}
-        onDragStart={(event) => onDragStart(event, 'yandexgpt', { model: 'yandexgpt-lite', prompt: '{{trigger.message.text}}' })}
+        onClick={() => onNodeClick('yandexgpt', { model: 'yandexgpt-lite', prompt: '' })}
+        onDragStart={(event) => onDragStart(event, 'yandexgpt', { model: 'yandexgpt-lite', prompt: '' })}
         draggable
       >
         YandexGPT
