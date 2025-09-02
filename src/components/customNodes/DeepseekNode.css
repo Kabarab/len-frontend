@@ -1,0 +1,43 @@
+@import './commonNodeStyles.css';
+
+.deepseek-node {
+  border: 1px solid #4A90E2; /* Deepseek color */
+  border-radius: 8px;
+  background: white;
+  width: 220px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  color: #333;
+}
+
+.deepseek-node .node-header {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  background-color: #eaf2fa;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.deepseek-node .node-icon {
+  margin-right: 8px;
+}
+
+.deepseek-node .node-title {
+  font-weight: bold;
+}
+
+.deepseek-node .node-body {
+  padding: 10px;
+  font-family: monospace;
+  font-size: 12px;
+}
+
+.deepseek-node .node-model-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #555;
+  background-color: #f7f7f7;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
