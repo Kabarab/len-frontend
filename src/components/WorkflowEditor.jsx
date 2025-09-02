@@ -1,5 +1,3 @@
-// len-frontend/src/components/WorkflowEditor.jsx
-
 import { useState, useEffect, useCallback, useRef } from 'react';
 import ReactFlow, { Background, Controls, addEdge, applyNodeChanges, applyEdgeChanges, MarkerType } from 'reactflow';
 import 'reactflow/dist/style.css';
@@ -10,7 +8,7 @@ import TelegramTriggerNode from './customNodes/TelegramTriggerNode';
 import HttpRequestNode from './customNodes/HttpRequestNode';
 import HuggingFaceNode from './customNodes/HuggingFaceNode';
 import ChatGPTNode from './customNodes/ChatGPTNode';
-import YandexGPTNode from './customNodes/YandexGPTNode'; // --- ИМПОРТ YANDEX ---
+import YandexGPTNode from './customNodes/YandexGPTNode';
 import DeepseekNode from './customNodes/DeepseekNode';
 import NodeContextMenu from './NodeContextMenu';
 import PaneContextMenu from './PaneContextMenu';
@@ -26,7 +24,7 @@ const nodeTypes = {
   httpRequest: HttpRequestNode,
   huggingFace: HuggingFaceNode,
   chatGPT: ChatGPTNode,
-  yandexgpt: YandexGPTNode, // --- РЕГИСТРАЦИЯ YANDEX ---
+  yandexgpt: YandexGPTNode,
   deepseek: DeepseekNode,
 };
 let id = 0;
@@ -43,6 +41,18 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
   const [isSettingWebhook, setIsSettingWebhook] = useState(false);
   const [isDeletingWebhook, setIsDeletingWebhook] = useState(false);
   const [addNodeMenu, setAddNodeMenu] = useState(null);
+  const [secrets, setSecrets] = useState({}); // --- ДОБАВЛЕНО ---
+
+  // --- ДОБАВЛЕНО: Загрузка секретов при инициализации ---
+  useEffect(() => {
+      getAuthHeaders().then(headers => {
+          fetch(`${API_URL}/api/secrets`, { headers })
+              .then(res => res.json())
+              .then(data => setSecrets(data))
+              .catch(err => console.error("Ошибка при загрузке ключей:", err));
+      });
+  }, [getAuthHeaders]);
+
 
   const onAddNode = useCallback((sourceNodeId, event) => {
     const pane = reactFlowWrapper.current.getBoundingClientRect();
@@ -80,11 +90,34 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
     const type = event.dataTransfer.getData('application/reactflow');
     if (typeof type === 'undefined' || !type) return;
     const dataString = event.dataTransfer.getData('application/reactflow-data');
-    const data = dataString ? JSON.parse(dataString) : { label: `${type} узел` };
+    let data = dataString ? JSON.parse(dataString) : { label: `${type} узел` };
+    
+    // --- ДОБАВЛЕНО: Автозаполнение ключей при создании ---
+    switch(type) {
+        case 'telegramTrigger':
+        case 'telegram':
+            data.botToken = secrets.telegram || '';
+            break;
+        case 'chatGPT':
+            data.apiKey = secrets.openai || '';
+            break;
+        case 'yandexgpt':
+            data.apiKey = secrets.yandex || '';
+            data.folderId = secrets.yandexFolderId || '';
+            break;
+        case 'huggingFace':
+            data.hfToken = secrets.huggingface || '';
+            break;
+        case 'deepseek':
+            data.apiKey = secrets.deepseek || '';
+            break;
+    }
+
+
     const position = reactFlowInstance.screenToFlowPosition({ x: event.clientX, y: event.clientY });
     const newNode = { id: getId(), type, position, data };
     setNodes((nds) => nds.concat(newNode));
-  }, [reactFlowInstance]);
+  }, [reactFlowInstance, secrets]);
   
   const handleAddNodeSelect = (nodeType) => {
     if (!addNodeMenu) return;
@@ -101,15 +134,15 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
     if (nodeType === 'httpRequest') {
         defaultData = { method: 'GET', url: 'https://api.example.com/data' };
     } else if (nodeType === 'telegram') {
-        defaultData = { message: 'Новое сообщение' };
+        defaultData = { message: 'Новое сообщение', botToken: secrets.telegram || '' };
     } else if (nodeType === 'huggingFace') {
-        defaultData = { modelUrl: 'gpt2', prompt: 'Hello world' };
+        defaultData = { modelUrl: 'gpt2', prompt: '', hfToken: secrets.huggingface || '' };
     } else if (nodeType === 'chatGPT') {
-        defaultData = { model: 'gpt-3.5-turbo', prompt: 'Hello world' };
-    } else if (nodeType === 'yandexgpt') { // --- ДОБАВЛЕНО YANDEX ---
-        defaultData = { model: 'yandexgpt-lite', prompt: 'Hello world' };
+        defaultData = { model: 'gpt-3.5-turbo', prompt: '', apiKey: secrets.openai || '' };
+    } else if (nodeType === 'yandexgpt') {
+        defaultData = { model: 'yandexgpt-lite', prompt: '', apiKey: secrets.yandex || '', folderId: secrets.yandexFolderId || '' };
     } else if (nodeType === 'deepseek') {
-        defaultData = { model: 'deepseek-chat', prompt: 'Hello world' };
+        defaultData = { model: 'deepseek-chat', prompt: '', apiKey: secrets.deepseek || '' };
     }
 
 
@@ -277,23 +310,23 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
     } else if (menu.type === 'pane') {
         const position = reactFlowInstance.screenToFlowPosition({ x: menu.left, y: menu.top });
         if (action === 'addTelegramTriggerNode') {
-            createNewNode('telegramTrigger', position, { label: 'Триггер Telegram' });
+            createNewNode('telegramTrigger', position, { label: 'Триггер Telegram', botToken: secrets.telegram || '' });
         } else if (action === 'addTelegramNode') {
-            createNewNode('telegram', position, { message: '{{trigger.message.text}}' });
+            createNewNode('telegram', position, { message: '{{trigger.message.text}}', botToken: secrets.telegram || '' });
         } else if (action === 'addHttpRequestNode') {
             createNewNode('httpRequest', position, { method: 'GET', url: 'https://api.example.com' });
         } else if (action === 'addHuggingFaceNode') {
-            createNewNode('huggingFace', position, { modelUrl: 'gpt2', prompt: '' });
+            createNewNode('huggingFace', position, { modelUrl: 'gpt2', prompt: '', hfToken: secrets.huggingface || '' });
         } else if (action === 'addChatGPTNode') {
-            createNewNode('chatGPT', position, { model: 'gpt-3.5-turbo', prompt: '' });
-        } else if (action === 'addYandexGPTNode') { // --- ДОБАВЛЕНО YANDEX ---
-            createNewNode('yandexgpt', position, { model: 'yandexgpt-lite', prompt: '' });
+            createNewNode('chatGPT', position, { model: 'gpt-3.5-turbo', prompt: '', apiKey: secrets.openai || '' });
+        } else if (action === 'addYandexGPTNode') {
+            createNewNode('yandexgpt', position, { model: 'yandexgpt-lite', prompt: '', apiKey: secrets.yandex || '', folderId: secrets.yandexFolderId || '' });
         } else if (action === 'addDeepseekNode') {
-            createNewNode('deepseek', position, { model: 'deepseek-chat', prompt: '' });
+            createNewNode('deepseek', position, { model: 'deepseek-chat', prompt: '', apiKey: secrets.deepseek || '' });
         }
     }
     setMenu(null);
-  }, [menu, nodes, reactFlowInstance]);
+  }, [menu, nodes, reactFlowInstance, secrets]);
 
 
   const defaultEdgeOptions = {

@@ -111,11 +111,28 @@ body,
   cursor: pointer;
   font-weight: bold;
   transition: background-color 0.2s;
+  margin-left: 10px; /* Добавлен отступ */
 }
 
 .logout-button:hover {
   background-color: #f5c6cb;
 }
+
+.settings-button {
+    padding: 8px 16px;
+    background-color: #e2e6ea;
+    color: #343a40;
+    border: 1px solid #dae0e5;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.settings-button:hover {
+    background-color: #dae0e5;
+}
+
 html, body, #root {
   height: 100%;
   width: 100%;
@@ -141,21 +158,6 @@ html, body, #root {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
-}
-
-.logout-button {
-  padding: 8px 16px;
-  background-color: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.2s;
-}
-
-.logout-button:hover {
-  background-color: #f5c6cb;
 }
 
 /* --- Адаптивность --- */
