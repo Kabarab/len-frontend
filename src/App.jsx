@@ -1,3 +1,5 @@
+// len-frontend/src/App.jsx
+
 import { useState, useEffect } from 'react';
 import { auth, onAuthStateChanged } from './firebase';
 
@@ -106,6 +108,18 @@ function App() {
                     hfToken: assistantData.hfToken,
                     modelUrl: assistantData.modelUrl,
                     prompt: '',
+                },
+            };
+            break;
+        case 'deepseek':
+            aiNode = {
+                id: aiNodeId,
+                type: 'deepseek',
+                position: { x: 250, y: 250 },
+                data: {
+                    apiKey: assistantData.apiKey,
+                    prompt: '',
+                    model: 'deepseek-chat'
                 },
             };
             break;

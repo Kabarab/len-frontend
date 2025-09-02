@@ -1,3 +1,5 @@
+/* len-frontend/src/components/Sidebar.css */
+
 .sidebar {
   width: 250px;
   padding: 15px;
@@ -52,4 +54,8 @@
 
 .sidebar-node.yandexgpt {
   border-color: #FF0000; /* Yandex color */
+}
+
+.sidebar-node.deepseek {
+  border-color: #4A90E2; /* Deepseek color */
 }

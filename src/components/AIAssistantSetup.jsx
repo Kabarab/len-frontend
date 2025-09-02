@@ -1,3 +1,5 @@
+// len-frontend/src/components/AIAssistantSetup.jsx
+
 import { useState } from 'react';
 import './AIAssistantSetup.css';
 
@@ -12,6 +14,7 @@ function AIAssistantSetup({ onCreateAssistant, creating }) {
   const [openAIApiKey, setOpenAIApiKey] = useState('');
   const [hfToken, setHfToken] = useState('');
   const [hfModelUrl, setHfModelUrl] = useState('');
+  const [deepseekApiKey, setDeepseekApiKey] = useState('');
 
 
   const handleSubmit = (event) => {
@@ -41,6 +44,13 @@ function AIAssistantSetup({ onCreateAssistant, creating }) {
                 return;
             }
             providerData = { hfToken, modelUrl: hfModelUrl };
+            break;
+        case 'deepseek':
+            if (!deepseekApiKey.trim()) {
+                alert('Пожалуйста, заполните API Ключ для Deepseek.');
+                return;
+            }
+            providerData = { apiKey: deepseekApiKey, model: 'deepseek-chat' };
             break;
         default:
             alert('Выбран неизвестный AI провайдер');
@@ -120,6 +130,19 @@ function AIAssistantSetup({ onCreateAssistant, creating }) {
                     </div>
                 </>
             )
+        case 'deepseek':
+            return (
+                <div>
+                  <label htmlFor="deepseek-api-key">API Ключ Deepseek:</label>
+                  <input
+                    id="deepseek-api-key"
+                    type="password"
+                    placeholder="Например: sk-..."
+                    value={deepseekApiKey}
+                    onChange={(e) => setDeepseekApiKey(e.target.value)}
+                  />
+                </div>
+            );
         default:
             return null;
     }
@@ -147,6 +170,7 @@ function AIAssistantSetup({ onCreateAssistant, creating }) {
                 <option value="yandexgpt">YandexGPT</option>
                 <option value="chatGPT">ChatGPT</option>
                 <option value="huggingFace">Hugging Face</option>
+                <option value="deepseek">Deepseek</option>
             </select>
         </div>
 

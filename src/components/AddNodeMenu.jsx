@@ -1,3 +1,5 @@
+// len-frontend/src/components/AddNodeMenu.jsx
+
 import './AddNodeMenu.css';
 
 function AddNodeMenu({ top, left, onSelectNode }) {
@@ -10,6 +12,7 @@ function AddNodeMenu({ top, left, onSelectNode }) {
       <button onClick={() => onSelectNode('chatGPT')}>ChatGPT</button>
       {/* --- ДОБАВЛЕНО YANDEX --- */}
       <button onClick={() => onSelectNode('yandexgpt')}>YandexGPT</button>
+      <button onClick={() => onSelectNode('deepseek')}>Deepseek</button>
     </div>
   );
 }

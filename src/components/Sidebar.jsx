@@ -1,3 +1,5 @@
+// len-frontend/src/components/Sidebar.jsx
+
 import './Sidebar.css';
 
 function Sidebar({ onNodeClick, className }) {
@@ -67,6 +69,15 @@ function Sidebar({ onNodeClick, className }) {
         draggable
       >
         YandexGPT
+      </div>
+
+      <div
+        className="sidebar-node deepseek"
+        onClick={() => onNodeClick('deepseek', { model: 'deepseek-chat', prompt: '' })}
+        onDragStart={(event) => onDragStart(event, 'deepseek', { model: 'deepseek-chat', prompt: '' })}
+        draggable
+      >
+        Deepseek
       </div>
     </aside>
   );

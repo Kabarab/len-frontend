@@ -1,18 +1,17 @@
+// len-frontend/src/components/NodeContextMenu.jsx
+
 import './NodeContextMenu.css';
 
-function PaneContextMenu({ top, left, onAction }) {
+function NodeContextMenu({ top, left, onAction, nodeType }) {
   return (
     <div className="context-menu" style={{ top, left }}>
-      <div className="context-menu-header">Добавить узел</div>
-      <button onClick={() => onAction('addTelegramTriggerNode')}>Триггер Telegram</button>
-      <button onClick={() => onAction('addTelegramNode')}>Узел Telegram</button>
-      <button onClick={() => onAction('addHttpRequestNode')}>Узел HTTP Запроса</button>
-      <button onClick={() => onAction('addHuggingFaceNode')}>Узел Hugging Face</button>
-      <button onClick={() => onAction('addChatGPTNode')}>Узел ChatGPT</button>
-      {/* --- ДОБАВЛЕНО YANDEX --- */}
-      <button onClick={() => onAction('addYandexGPTNode')}>Узел YandexGPT</button>
+      {/* --- ИСПРАВЛЕНИЕ: Добавляем 'yandexgpt' --- */}
+      {(nodeType === 'telegram' || nodeType === 'telegramTrigger' || nodeType === 'httpRequest' || nodeType === 'huggingFace' || nodeType === 'chatGPT' || nodeType === 'yandexgpt' || nodeType === 'deepseek') && (
+        <button onClick={() => onAction('openSettings')}>Настройки</button>
+      )}
+      <button onClick={() => onAction('deleteNode')}>Удалить узел</button>
     </div>
   );
 }
 
-export default PaneContextMenu;
+export default NodeContextMenu;

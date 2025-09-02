@@ -1,3 +1,5 @@
+// len-frontend/src/components/SettingsPanel.jsx
+
 import { useState, useEffect } from 'react';
 import './SettingsPanel.css';
 
@@ -292,6 +294,44 @@ const YandexGPTNodeSettings = ({ node, onSave }) => {
     );
 };
 
+const DeepseekNodeSettings = ({ node, onSave }) => {
+    const [apiKey, setApiKey] = useState(node.data.apiKey || '');
+    const [model, setModel] = useState(node.data.model || 'deepseek-chat');
+    const [prompt, setPrompt] = useState(node.data.prompt || '');
+
+    useEffect(() => {
+        setApiKey(node.data.apiKey || '');
+        setModel(node.data.model || 'deepseek-chat');
+        setPrompt(node.data.prompt || '');
+    }, [node.data]);
+
+    const handleSave = () => {
+        onSave(node.id, { apiKey, model, prompt });
+    };
+
+    return (
+        <div className="deepseek-settings">
+            <div className="settings-header">Настройки Deepseek</div>
+            <div className="settings-content">
+                <label>API Ключ (Deepseek):</label>
+                <input type="password" value={apiKey} onChange={(e) => setApiKey(e.target.value)} />
+                <small>Ваш API ключ от Deepseek.</small>
+
+                <label>Модель:</label>
+                <select value={model} onChange={(e) => setModel(e.target.value)}>
+                    <option value="deepseek-chat">Deepseek Chat</option>
+                    <option value="deepseek-coder">Deepseek Coder</option>
+                </select>
+
+                <label>Запрос (Prompt):</label>
+                <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} rows="6"></textarea>
+                <small>Можно использовать плейсхолдеры, например `{'{{trigger.message.text}}'}`</small>
+            </div>
+            <button className="save-button" onClick={handleSave}>Применить настройки</button>
+        </div>
+    );
+};
+
 
 // --- ГЛАВНЫЙ КОМПОНЕНТ-ПЕРЕКЛЮЧАТЕЛЬ ---
 function SettingsPanel(props) {
@@ -315,6 +355,8 @@ function SettingsPanel(props) {
                 return <ChatGPTNodeSettings {...props} />;
             case 'yandexgpt':
                 return <YandexGPTNodeSettings {...props} />;
+            case 'deepseek':
+                return <DeepseekNodeSettings {...props} />;
             default:
                 return null;
         }

@@ -1,3 +1,5 @@
+// len-frontend/src/components/WorkflowEditor.jsx
+
 import { useState, useEffect, useCallback, useRef } from 'react';
 import ReactFlow, { Background, Controls, addEdge, applyNodeChanges, applyEdgeChanges, MarkerType } from 'reactflow';
 import 'reactflow/dist/style.css';
@@ -9,6 +11,7 @@ import HttpRequestNode from './customNodes/HttpRequestNode';
 import HuggingFaceNode from './customNodes/HuggingFaceNode';
 import ChatGPTNode from './customNodes/ChatGPTNode';
 import YandexGPTNode from './customNodes/YandexGPTNode'; // --- ИМПОРТ YANDEX ---
+import DeepseekNode from './customNodes/DeepseekNode';
 import NodeContextMenu from './NodeContextMenu';
 import PaneContextMenu from './PaneContextMenu';
 import SettingsPanel from './SettingsPanel';
@@ -24,6 +27,7 @@ const nodeTypes = {
   huggingFace: HuggingFaceNode,
   chatGPT: ChatGPTNode,
   yandexgpt: YandexGPTNode, // --- РЕГИСТРАЦИЯ YANDEX ---
+  deepseek: DeepseekNode,
 };
 let id = 0;
 const getId = () => `dndnode_${id++}`;
@@ -104,6 +108,8 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
         defaultData = { model: 'gpt-3.5-turbo', prompt: 'Hello world' };
     } else if (nodeType === 'yandexgpt') { // --- ДОБАВЛЕНО YANDEX ---
         defaultData = { model: 'yandexgpt-lite', prompt: 'Hello world' };
+    } else if (nodeType === 'deepseek') {
+        defaultData = { model: 'deepseek-chat', prompt: 'Hello world' };
     }
 
 
@@ -282,6 +288,8 @@ function WorkflowEditor({ workflowId, onBack, getAuthHeaders }) {
             createNewNode('chatGPT', position, { model: 'gpt-3.5-turbo', prompt: '' });
         } else if (action === 'addYandexGPTNode') { // --- ДОБАВЛЕНО YANDEX ---
             createNewNode('yandexgpt', position, { model: 'yandexgpt-lite', prompt: '' });
+        } else if (action === 'addDeepseekNode') {
+            createNewNode('deepseek', position, { model: 'deepseek-chat', prompt: '' });
         }
     }
     setMenu(null);
